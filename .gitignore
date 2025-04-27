@@ -1,0 +1,12 @@
+# ==-----------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: Apache-2.0
+# ==-----------------------------------------------------------== #
+
+# Gradle
+/.gradle/
+/build/
+
+# SBOM
+/reuse.spdx
