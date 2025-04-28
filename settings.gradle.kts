@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // ==-----------------------------------------------------------== //
 
-rootProject.name = "necronux.internal"
+rootProject.name = "necronux.internal.pkl"
 
 pluginManagement {
     repositories {

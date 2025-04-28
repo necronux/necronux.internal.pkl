@@ -6,13 +6,13 @@
 # ==-----------------------------------------------------------== #
 -->
 
-# necronux.internal
+# necronux.internal.pkl
 
-Shared Pkl modules for internal use across the Necronux organization.
+Shared Pkl modules for internal use in repos in @necronux
 
 ## Contributing
 
-We welcome contributions to necronux.internal!
+We welcome contributions to necronux.internal.pkl!
 Please see [CONTRIBUTING.md] for guidelines on how to contribute to the project.
 
 [CONTRIBUTING.md]: https://github.com/necronux/.github/blob/main/CONTRIBUTING.md
@@ -29,7 +29,7 @@ Please see [CONTRIBUTING.md] for guidelines on how to contribute to the project.
 
 ## License
 
-necronux.internal is primarily distributed under the terms of `Apache-2.0` license.
+necronux.internal.pkl is primarily distributed under the terms of `Apache-2.0` license.
 However, certain portions of the repository are covered by different licenses.
 
 See [Apache-2.0.txt], [CC-BY-SA-4.0.txt], and [COPYRIGHT.txt] for full licensing details.

@@ -1,6 +1,6 @@
 Short version for non-lawyers:
 
-The necronux.internal project is primarily distributed under the terms of `Apache-2.0` license.
+The necronux.internal.pkl project is primarily distributed under the terms of `Apache-2.0` license.
 However, certain portions of the repository are covered by different licenses.
 
 It is Copyright © 2025 Nayan Patil <nayantsg@proton.me>
@@ -19,13 +19,13 @@ For detailed licensing information, see:
 
 Longer version:
 
-Contributors retain copyright to their respective contributions in the necronux.internal project.
-No copyright assignment is required to contribute to the necronux.internal project.
+Contributors retain copyright to their respective contributions in the necronux.internal.pkl project.
+No copyright assignment is required to contribute to the necronux.internal.pkl project.
 
 Some files include explicit copyright notices and/or license notices.
 For full authorship information, see the version control history.
 
-Except as otherwise noted, necronux.internal is licensed under Apache-2.0 (<LICENSES/Apache-2.0.txt>
+Except as otherwise noted, necronux.internal.pkl is licensed under Apache-2.0 (<LICENSES/Apache-2.0.txt>
 or <http://www.apache.org/licenses/LICENSE-2.0>)
 
 For any legal inquiries or concerns, please contact:
@@ -37,5 +37,5 @@ We track licenses in two ways:
   This information is used to generate SPDX bill of materials (SBOM) in the file `reuse.spdx`, which is shipped at each release.
 - For out-of-tree dependencies, we manually track licensing details in `THIRD-PARTY-NOTICES`.
 
-Both `reuse.spdx` and `THIRD-PARTY-NOTICES` are shipped with each release of necronux.internal
-Please refer to these files for detailed information as to the components of any given necronux.internal release.
+Both `reuse.spdx` and `THIRD-PARTY-NOTICES` are shipped with each release of necronux.internal.pkl
+Please refer to these files for detailed information as to the components of any given necronux.internal.pkl release.
