@@ -36,4 +36,4 @@ See [Apache-2.0.txt], [CC-BY-SA-4.0.txt], and [COPYRIGHT.txt] for full licensing
 
 [Apache-2.0.txt]: LICENSES/Apache-2.0.txt
 [CC-BY-SA-4.0.txt]: LICENSES/CC-BY-SA-4.0.txt
-[COPYRIGHT.txt]: COPYRIGHT.txt
+[COPYRIGHT]: COPYRIGHT
