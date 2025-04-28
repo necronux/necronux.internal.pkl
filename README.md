@@ -8,7 +8,7 @@
 
 # necronux.internal.pkl
 
-Shared Pkl modules for internal use in repos in @necronux
+Shared Pkl modules for internal use in repos in necronux org.
 
 ## Contributing
 
