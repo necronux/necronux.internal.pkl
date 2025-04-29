@@ -16,6 +16,9 @@ runpkl:
 
 resolve:
     ./gradlew resolveInternal
+    ./gradlew resolveInternalPklCi
 
 eval:
     ./gradlew evalGhaModules
+    ./gradlew evalInternalPklCiModules
+    ./gradlew evalInternalPklCiWorkflows

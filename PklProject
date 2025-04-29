@@ -18,4 +18,14 @@ package {
   sourceCode = "https://github.com/necronux/necronux.internal.pkl/tree/\(name)@\(version)/packages/\(name)"
   sourceCodeUrlScheme = "https://github.com/necronux/necronux.internal.pkl/blob/\(name)@\(version)/packages/\(name)%{path}#L%{line}-%{endLine}"
   issueTracker = "https://github.com/necronux/necronux.internal.pkl/issues"
+  exclude {
+    ".github/"
+    "gradle/**"
+    "gradlew"
+    "gradlew.bat"
+    "tools/**"
+    "build.gradle.kts"
+    "settings.gradle.kts"
+    "justfile"
+  }
 }

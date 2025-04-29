@@ -8,5 +8,9 @@
 /.gradle/
 /build/
 
+# Pkl
+/tools/**/build/
+/tools/**/.out/
+
 # SBOM
 /reuse.spdx
