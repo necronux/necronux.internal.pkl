@@ -1,0 +1,84 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module ReleasePublishGh
+
+import ".../schemas/GitHubAction.pkl" as gha
+
+import ".../gha/ActionsRegistry.pkl" as ActReg
+import ".../gha/UtilsCommon.pkl"
+
+const function createRelease() = new gha.Job {
+  name = "Create GitHub Release"
+  needs {
+    "build-necronux-internal-pkl"
+    "generate-sbom"
+  }
+  permissions {
+    contents = "write"
+  }
+  steps {
+    new {
+      name = "Download necronux.internal.pkl tars, zips and sums"
+      uses = ActReg.downloadArtifact
+      with {
+        ["name"] = "necronux.internal.pkl-${{ github.ref_name }}"
+        ["path"] = "extract_these"
+        ["merge-multiple"] = true
+      }
+    }
+    new {
+      name = "Download SBOM tars, zips and sums"
+      uses = ActReg.downloadArtifact
+      with {
+        ["name"] = "necronux.internal.pkl_sbom-${{ github.ref_name }}"
+        ["path"] = "extract_these"
+        ["merge-multiple"] = true
+      }
+    }
+    new {
+      name = "Extract required files"
+      run = """
+        mkdir -p extracted/
+        cd extract_these
+
+        for tar_file in necronux.internal.pkl-*.tar.gz necronux.internal.pkl_sbom-*.tar.gz; do
+        if [ -f "$tar_file" ]; then
+        echo "Extracting $tar_file"
+        tar -xzvf "$tar_file" -C ../extracted
+        else
+        echo "No matching tar files found for pattern: $tar_file"
+        fi
+        done
+        """
+      shell = "bash"
+    }
+    new {
+      name = "Create directory for release and transfer files"
+      run = """
+        mkdir -p rel_artifacts/
+        cp -r extracted/necronux.internal.pkl-${{ github.ref_name }}/* rel_artifacts/
+        cp -r extracted/necronux.internal.pkl_sbom-${{ github.ref_name }}/* rel_artifacts/
+        """
+      shell = "bash"
+    }
+    new {
+      name = "Publish github release"
+      uses = ActReg.actionGhRelease
+      with {
+        ["tag_name"] = "${{ github.ref_name }}"
+        ["fail_on_unmatched_files"] = true
+        ["generate_release_notes"] = true
+        ["draft"] = true
+        ["files"] = "rel_artifacts/*"
+      }
+      env {
+        ["GITHUB_TOKEN"] = "${{ secrets.GITHUB_TOKEN }}"
+      }
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)

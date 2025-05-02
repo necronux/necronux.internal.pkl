@@ -1,0 +1,39 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module JobsWorkflowApproveNTSG
+
+import "../schemas/GitHubAction.pkl" as gha
+
+import "ActionsRegistry.pkl" as ActReg
+import "UtilsCommon.pkl"
+
+const function selfApprovePRNTSG() = new gha.Job {
+  name = "Self Approve PR Review by NayanTheSpaceGuy"
+  permissions {
+    `pull-requests` = "write"
+  }
+  steps {
+    new {
+      name = "Approve Review by NayanTheSpaceGuy"
+      uses = ActReg.githubScript
+      `if` = "github.actor == 'NayanTheSpaceGuy' && contains(github.event.comment.body, 'LGTM')"
+      with {
+        ["script"] = """
+        github.rest.pulls.createReview({
+          owner: context.repo.owner,
+          repo: context.repo.repo,
+          pull_number: context.issue.number,
+          review_id: 1,
+          event: 'APPROVE',
+          body: 'Let`s get this merged then.'
+        })
+        """
+      }
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)

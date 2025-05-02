@@ -5,11 +5,11 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module Jobs
+module JobsConcl
 
 import "../schemas/GitHubAction.pkl" as gha
 
-import "Common.pkl"
+import "UtilsCommon.pkl"
 
 // Conclusion Jobs:
 // To prevent this job from being skipped if its dependencies fail,
@@ -20,7 +20,7 @@ import "Common.pkl"
 const function conclusionAll() = new gha.Job {
   name = "Conclusion"
   `if` = "${{ !cancelled() }}"
-  permissions = (Common.contentPermissions("none")) {}
+  permissions = (UtilsCommon.contentPermissions("none")) {}
   steps {
     // Manually check the status of all dependencies. `if: failure()` does not work.
     new {
@@ -32,14 +32,14 @@ const function conclusionAll() = new gha.Job {
       shell = "bash"
     }
   }
-} |> Common.standardJobConfig(null, null)
+} |> UtilsCommon.standardJobConfig(null, null)
 
-const function conclusionPR() = (conclusionAll()) {
+const function conclusionPR(ref: String) = (conclusionAll()) {
   name = "Conclusion PR"
-  `if` = Common.ifDevelopOrPrOrWDPrAndNotCancelled
+  `if` = UtilsCommon.ifRefOrPrOrWDPrAndNotCancelled(ref)
 }
 
-const function conclusionPush() = (conclusionAll()) {
+const function conclusionPush(ref: String) = (conclusionAll()) {
   name = "Conclusion Push"
-  `if` = Common.ifDevelopOrPushOrWDPushAndNotCancelled
+  `if` = UtilsCommon.ifRefOrPushOrWDPushAndNotCancelled(ref)
 }

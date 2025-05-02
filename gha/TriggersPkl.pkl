@@ -1,0 +1,23 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module TriggersPkl
+
+import "../schemas/GitHubAction.pkl" as gha
+
+const function pklPaths() = new Listing<String> {
+  "*.pkl"
+  "**/*.pkl"
+  "stdschema/**"
+  "tools/**"
+  "*.kts"
+  "**/*.kts"
+  "gradle/**"
+  "gradlew"
+  "gradlew.bat"
+  "justfile"
+}

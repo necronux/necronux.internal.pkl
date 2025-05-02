@@ -1,0 +1,22 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module ActionsRegistry
+
+import "../tools/internal.pkl.ci/pkl/.github/workflows/ci-dummies-for-deps.pkl" as Dummy
+
+const actionGhRelease = Dummy.jobs["action-gh-release"].steps[0].uses
+const cargoDenyAction = Dummy.jobs["cargo-deny-action"].steps[0].uses
+const checkout = Dummy.jobs["checkout"].steps[0].uses
+const downloadArtifact = Dummy.jobs["download-artifact"].steps[0].uses
+const githubScript = Dummy.jobs["github-script"].steps[0].uses
+const installAction = Dummy.jobs["install-action"].steps[0].uses
+const reuseAction = Dummy.jobs["reuse-action"].steps[0].uses
+const rustCache = Dummy.jobs["rust-cache"].steps[0].uses
+const rustToolchain = Dummy.jobs["rust-toolchain"].steps[0].uses
+const typos = Dummy.jobs["typos"].steps[0].uses
+const uploadArtifact = Dummy.jobs["upload-artifact"].steps[0].uses

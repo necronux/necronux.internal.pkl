@@ -1,0 +1,25 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module PolicyBranchProtectionJobs
+
+import ".../schemas/GitHubAction.pkl" as gha
+
+import ".../gha/StepsCommon.pkl"
+import ".../gha/UtilsCommon.pkl"
+
+const function protectMainBranch() = new gha.Job {
+  name = "Protect Main Branch"
+  steps {
+    StepsCommon.checkout(null)
+    new {
+      name = "Ensure PRs to main branch are only from allowed branches"
+      run = "tools/scripts/ci/protect-main-branch.sh"
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)

@@ -9,6 +9,35 @@ module MatricesRust
 
 import "../schemas/GitHubAction.pkl" as gha
 
+const function rustMatrixBuild() = new Listing {
+  ...rustMatrixBase()
+  ...rustMatrixBuildTestsExtras()
+  ...rustMatrixNotForTests()
+}
+
+const function rustMatrixClippyFull() = new Listing {
+  ...rustMatrixBase()
+  ...rustMatrixExtraNightlyBeta()
+  ...rustMatrixBuildTestsExtras()
+  ...rustMatrixNotForTests()
+}
+
+const function rustMatrixClippyMinimal() = new Listing {
+  ...rustMatrixBase()
+  ...rustMatrixExtraNightlyBeta()
+}
+
+const function rustMatrixTestFull() = new Listing {
+  ...rustMatrixBase()
+  ...rustMatrixExtraNightlyBeta()
+  ...rustMatrixBuildTestsExtras()
+}
+
+const function rustMatrixTestMinimal() = new Listing {
+  ...rustMatrixBase()
+  ...rustMatrixExtraNightlyBeta()
+}
+
 // Runners
 const x86_64_LinuxRunner = "ubuntu-24.04"
 const aarch64_LinuxRunner = "ubuntu-24.04-arm"

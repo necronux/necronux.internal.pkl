@@ -12,13 +12,28 @@ runpkl:
     just resolve
     just eval
 
-# Following subcommands are used in ci
-
 resolve:
-    ./gradlew resolveInternal
-    ./gradlew resolveInternalPklCi
+    just resolve-internal
+    just resolve-internalpklci
 
 eval:
+    just eval-internal
+    just eval-internalpklci
+
+# Following subcommands are used in ci
+
+resolve-internal:
+    ./gradlew resolveInternal
+
+resolve-internalpklci:
+    ./gradlew resolveInternalPklCi
+
+eval-internal:
     ./gradlew evalGhaModules
+
+eval-internalpklci:
     ./gradlew evalInternalPklCiModules
     ./gradlew evalInternalPklCiWorkflows
+
+make-internalpkg:
+    ./gradlew makeInternalPkg

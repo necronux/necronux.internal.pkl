@@ -1,0 +1,30 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module TriggersCommon
+
+import "../schemas/GitHubAction.pkl" as gha
+
+const function wDispatchEventSim(options: Listing<String>) = new gha.WorkflowInput {
+  description = "Specify which event to simulate"
+  required = false
+  type = "choice"
+  options = (options) {}
+}
+
+const function wDispatchReleaseType(options: Listing<String>) = new gha.WorkflowInput {
+  description = "Choose type of release"
+  required = true
+  type = "choice"
+  options = (options) {}
+}
+
+const function wDispatchReleaseTag() = new gha.WorkflowInput {
+  description = "Provide the existing tag to be used for the release"
+  required = true
+  type = "string"
+}

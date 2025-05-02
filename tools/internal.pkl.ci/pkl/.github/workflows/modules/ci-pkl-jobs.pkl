@@ -1,0 +1,54 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module CiPklJobs
+
+import ".../schemas/GitHubAction.pkl" as gha
+
+import ".../gha/StepsCommon.pkl"
+import ".../gha/UtilsCommon.pkl"
+
+const function resolveCheck() = new gha.Job {
+  name = "Resolve Check"
+  steps {
+    StepsCommon.checkout(null)
+    StepsCommon.installAction("just")
+    new {
+      name = "Check if necronux.internal.pkl pkl project can be resolved"
+      run = "just resolve-internal"
+      shell = "bash"
+    }
+    new {
+      name = "Check if internal.pkl.ci pkl project can be resolved"
+      run = "just resolve-internalpklci"
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)
+
+const function evalCheck() = new gha.Job {
+  name = "Eval Check"
+  steps {
+    StepsCommon.checkout(null)
+    StepsCommon.installAction("just")
+    new {
+      name = "Check if necronux.internal.pkl pkl modules can be evaluated"
+      run = "just eval-internal"
+      shell = "bash"
+    }
+    new {
+      name = "Check if internal.pkl.ci pkl modules can be evaluated"
+      run = "just eval-internalpklci"
+      shell = "bash"
+    }
+    new {
+      name = "Verify pkl modules evaluation reflects the latest changes"
+      run = "git diff --exit-code"
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)

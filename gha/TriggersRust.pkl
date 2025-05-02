@@ -1,0 +1,23 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module TriggersRust
+
+import "../schemas/GitHubAction.pkl" as gha
+
+const function rustPaths() = new Listing<String> {
+  "*.rs"
+  "**/*.rs"
+  "src/**"
+  "crates/**"
+  ".cargo/**"
+  "Cargo.toml"
+  "Cargo.lock"
+  "**/Cargo.toml"
+  "**/Cargo.lock"
+  "deny.toml"
+}

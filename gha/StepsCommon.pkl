@@ -1,0 +1,49 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module StepsCommon
+
+import "../schemas/GitHubAction.pkl" as gha
+
+import "ActionsRegistry.pkl" as ActReg
+import "UtilsCommon.pkl"
+
+const function checkout(depth: Int?) = new gha.Step {
+  name = "Checkout code"
+  uses = ActReg.checkout
+  with {
+    ["fetch-depth"] = depth ?? 1
+  }
+}
+
+const function checkoutWithRef(depth: Int?, ref: String) = (checkout(depth)) {
+  with {
+    ["ref"] = ref
+  }
+}
+
+const function installAction(tool: String) = new gha.Step {
+  name = "Install \(tool)"
+  uses = ActReg.installAction
+  with {
+    ["tool"] = tool
+  }
+}
+
+const function installActionIf(tool: String, condition: String) = (installAction(tool)) {
+  `if` = condition
+}
+
+const function installPodmanAptIf(condition: String) = new gha.Step {
+  `if` = condition
+  name = "Install podman"
+  run = """
+  sudo apt-get update
+  sudo apt-get install -y podman
+  """
+  shell = "bash"
+}

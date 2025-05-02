@@ -1,0 +1,192 @@
+# ==-----------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: Apache-2.0
+# ==-----------------------------------------------------------== #
+
+# Do not modify!
+# This file was generated from a template using necronux.internal.pkl project.
+# Any changes should be made to the template, not this file.
+
+name: Release-Publish
+'on':
+  push:
+    tags:
+    - '*.*.*'
+permissions:
+  contents: read
+jobs:
+  validate-release-tag:
+    name: Validate Release Tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        ref: ${{ github.ref }}
+    - name: Display release tag
+      shell: bash
+      run: 'echo "Release tag: ${{ github.ref_name }}"'
+    - name: Check that tag version and necronux.internal.pkl PklProject version are the same
+      shell: bash
+      run: |-
+        TAG_VERSION="${{ github.ref_name }}"
+        PKL_PROJECT_VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' PklProject)
+        echo "Extracted necronux.internal.pkl PklProject version: '$PKL_PROJECT_VERSION'"
+        if [ "$TAG_VERSION" != "$PKL_PROJECT_VERSION" ]; then
+          echo "Error: Tag version ("$TAG_VERSION") does not match necronux.internal.pkl PklProject version ("$PKL_PROJECT_VERSION")"
+          exit 1
+        fi
+    - name: Check that tag version and internal.pkl.ci PklProject version are the same
+      shell: bash
+      run: |-
+        TAG_VERSION="${{ github.ref_name }}"
+        PKL_PROJECT_VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' tools/internal.pkl.ci/PklProject)
+        echo "Extracted root PklProject version: '$PKL_PROJECT_VERSION'"
+        if [ "$TAG_VERSION" != "$PKL_PROJECT_VERSION" ]; then
+          echo "Error: Tag version ("$TAG_VERSION") does not match tools/internal.pkl.ci/PklProject version ("$PKL_PROJECT_VERSION")"
+          exit 1
+        fi
+  build-necronux-internal-pkl:
+    name: Build necronux.internal.pkl
+    needs:
+    - validate-release-tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        ref: ${{ github.ref }}
+    - name: Install just
+      uses: taiki-e/install-action@v2
+      with:
+        tool: just
+    - name: Build release package
+      shell: bash
+      run: just make-internalpkg
+    - name: Determine package dir path and archive name
+      shell: bash
+      run: |-
+        pkgdir="build/generated/pkl/packages"
+        echo "PKGDIR=$pkgdir" >> $GITHUB_ENV
+        echo "ARCHIVE=necronux.internal.pkl-${{ github.ref_name }}" >> $GITHUB_ENV
+    - name: Create directory for archive and transfer files
+      shell: bash
+      run: |-
+        mkdir -p "$ARCHIVE"
+        cp "$PKGDIR"/necronux.internal.pkl@${{ github.ref_name }} "$ARCHIVE"/
+        cp "$PKGDIR"/necronux.internal.pkl@${{ github.ref_name }}.sha256 "$ARCHIVE"/
+        cp "$PKGDIR"/necronux.internal.pkl@${{ github.ref_name }}.zip "$ARCHIVE"/
+        cp "$PKGDIR"/necronux.internal.pkl@${{ github.ref_name }}.zip.sha256 "$ARCHIVE"/
+    - name: Build archive
+      shell: bash
+      run: |-
+        tar czf "$ARCHIVE.tar.gz" "$ARCHIVE"
+        shasum -a 256 "$ARCHIVE.tar.gz" > "$ARCHIVE.tar.gz.sha256"
+        echo "ASSET=$ARCHIVE.tar.gz" >> $GITHUB_ENV
+        echo "ASSET_SUM=$ARCHIVE.tar.gz.sha256" >> $GITHUB_ENV
+    - name: Upload pkgs, zips and sums
+      uses: actions/upload-artifact@v4
+      with:
+        name: necronux.internal.pkl-${{ inputs.release_tag }}
+        overwrite: true
+        compression-level: 9
+        path: |-
+          ${{ env.ASSET }}
+          ${{ env.ASSET_SUM }}
+  generate-sbom:
+    name: Generate REUSE SPDX SBOM
+    needs:
+    - validate-release-tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        ref: ${{ github.ref }}
+    - name: REUSE SPDX SBOM
+      uses: fsfe/reuse-action@v5
+      with:
+        args: spdx -o reuse.spdx
+    - name: Determine archive name
+      shell: bash
+      run: echo "ARCHIVE=necronux.internal.pkl_sbom-${{ github.ref_name }}" >> $GITHUB_ENV
+    - name: Create directory for archive and transfer files
+      shell: bash
+      run: |-
+        mkdir -p "$ARCHIVE"
+        cp reuse.spdx "$ARCHIVE"/
+    - name: Build archive
+      shell: bash
+      run: |-
+        tar czf "$ARCHIVE.tar.gz" "$ARCHIVE"
+        shasum -a 256 "$ARCHIVE.tar.gz" > "$ARCHIVE.tar.gz.sha256"
+        echo "ASSET=$ARCHIVE.tar.gz" >> $GITHUB_ENV
+        echo "ASSET_SUM=$ARCHIVE.tar.gz.sha256" >> $GITHUB_ENV
+    - name: Upload tars and sums
+      uses: actions/upload-artifact@v4
+      with:
+        name: necronux.internal.pkl_sbom-${{ github.ref_name }}
+        overwrite: true
+        compression-level: 9
+        path: |-
+          ${{ env.ASSET }}
+          ${{ env.ASSET_SUM }}
+  create-release:
+    name: Create GitHub Release
+    needs:
+    - build-necronux-internal-pkl
+    - generate-sbom
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Download necronux.internal.pkl tars, zips and sums
+      uses: actions/download-artifact@v4
+      with:
+        name: necronux.internal.pkl-${{ github.ref_name }}
+        path: extract_these
+        merge-multiple: true
+    - name: Download SBOM tars, zips and sums
+      uses: actions/download-artifact@v4
+      with:
+        name: necronux.internal.pkl_sbom-${{ github.ref_name }}
+        path: extract_these
+        merge-multiple: true
+    - name: Extract required files
+      shell: bash
+      run: |-
+        mkdir -p extracted/
+        cd extract_these
+
+        for tar_file in necronux.internal.pkl-*.tar.gz necronux.internal.pkl_sbom-*.tar.gz; do
+        if [ -f "$tar_file" ]; then
+        echo "Extracting $tar_file"
+        tar -xzvf "$tar_file" -C ../extracted
+        else
+        echo "No matching tar files found for pattern: $tar_file"
+        fi
+        done
+    - name: Create directory for release and transfer files
+      shell: bash
+      run: |-
+        mkdir -p rel_artifacts/
+        cp -r extracted/necronux.internal.pkl-${{ github.ref_name }}/* rel_artifacts/
+        cp -r extracted/necronux.internal.pkl_sbom-${{ github.ref_name }}/* rel_artifacts/
+    - name: Publish github release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.ref_name }}
+        fail_on_unmatched_files: true
+        generate_release_notes: true
+        draft: true
+        files: rel_artifacts/*

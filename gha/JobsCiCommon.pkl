@@ -1,0 +1,38 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module JobsCiCommon
+
+import "../schemas/GitHubAction.pkl" as gha
+
+import "ActionsRegistry.pkl" as ActReg
+import "StepsCommon.pkl"
+import "UtilsCommon.pkl"
+
+const function typos() = new gha.Job {
+  name = "Typos"
+  steps {
+    StepsCommon.checkout(null)
+    new {
+      name = "Check for typos"
+      uses = ActReg.typos
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)
+
+const function taplo() = new gha.Job {
+  name = "Taplofmt"
+  steps {
+    StepsCommon.checkout(null)
+    StepsCommon.installAction("taplo-cli")
+    new {
+      name = "Run Taplo"
+      run = "taplo fmt --check --diff"
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)

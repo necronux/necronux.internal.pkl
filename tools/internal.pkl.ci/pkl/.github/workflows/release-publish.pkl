@@ -1,0 +1,34 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module ReleasePublish
+
+amends ".../schemas/GitHubAction.pkl"
+
+import ".../gha/UtilsCommon.pkl"
+
+import "modules/release-publish-build.pkl" as Build
+import "modules/release-publish-gh.pkl" as Github
+import "modules/release-publish-validate.pkl" as Validate
+
+headercomment = UtilsCommon.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "Apache-2.0")
+name = "Release-Publish"
+permissions = (UtilsCommon.contentPermissions("read")) {}
+
+on {
+  push {
+    tags {
+      "*.*.*"
+    }
+  }
+}
+jobs {
+  ["validate-release-tag"] = (Validate.releaseTag()) {}
+  ["build-necronux-internal-pkl"] = (Build.necronuxInternalPkl()) {}
+  ["generate-sbom"] = (Build.reuseSPDXSBOM()) {}
+  ["create-release"] = (Github.createRelease()) {}
+}

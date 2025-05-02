@@ -1,0 +1,53 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module ReleasePublishValidate
+
+import ".../schemas/GitHubAction.pkl" as gha
+
+import ".../gha/StepsCommon.pkl"
+import ".../gha/UtilsCommon.pkl"
+
+const function releaseTag() = new gha.Job {
+  name = "Validate Release Tag"
+  steps {
+    StepsCommon.checkoutWithRef(1, "${{ github.ref }}")
+    new {
+      name = "Display release tag"
+      run = """
+      echo "Release tag: ${{ github.ref_name }}"
+      """
+      shell = "bash"
+    }
+    new {
+      name = "Check that tag version and necronux.internal.pkl PklProject version are the same"
+      run = """
+      TAG_VERSION="${{ github.ref_name }}"
+      PKL_PROJECT_VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' PklProject)
+      echo "Extracted necronux.internal.pkl PklProject version: '$PKL_PROJECT_VERSION'"
+      if [ "$TAG_VERSION" != "$PKL_PROJECT_VERSION" ]; then
+        echo "Error: Tag version ("$TAG_VERSION") does not match necronux.internal.pkl PklProject version ("$PKL_PROJECT_VERSION")"
+        exit 1
+      fi
+      """
+      shell = "bash"
+    }
+    new {
+      name = "Check that tag version and internal.pkl.ci PklProject version are the same"
+      run = """
+      TAG_VERSION="${{ github.ref_name }}"
+      PKL_PROJECT_VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' tools/internal.pkl.ci/PklProject)
+      echo "Extracted root PklProject version: '$PKL_PROJECT_VERSION'"
+      if [ "$TAG_VERSION" != "$PKL_PROJECT_VERSION" ]; then
+        echo "Error: Tag version ("$TAG_VERSION") does not match tools/internal.pkl.ci/PklProject version ("$PKL_PROJECT_VERSION")"
+        exit 1
+      fi
+      """
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)

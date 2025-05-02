@@ -1,0 +1,74 @@
+# ==-----------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: Apache-2.0
+# ==-----------------------------------------------------------== #
+
+# Do not modify!
+# This file was generated from a template using necronux.internal.pkl project.
+# Any changes should be made to the template, not this file.
+
+name: CI-Dummies-For-Deps
+'on':
+  workflow_dispatch: {}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  action-gh-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: softprops/action-gh-release@v2
+  cargo-deny-action:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: EmbarkStudios/cargo-deny-action@v2
+  checkout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: actions/checkout@v4
+  download-artifact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: actions/download-artifact@v4
+  github-script:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: actions/github-script@v7
+  install-action:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: taiki-e/install-action@v2
+  reuse-action:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: fsfe/reuse-action@v5
+  rust-cache:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: Swatinem/rust-cache@v2
+  rust-toolchain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: dtolnay/rust-toolchain@v1
+  typos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: crate-ci/typos@v1.30.2
+  upload-artifact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: actions/upload-artifact@v4
