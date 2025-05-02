@@ -691,9 +691,9 @@ jobs: Jobs
 local jsonRenderer = new JsonRenderer {}
 output {
   text = if (headercomment != null)
-           "\(headercomment)\n\n# Do not modify!\n# This file was generated from a template using the necronux internal pkl package.\n# Any changes should be made to the template, not this file.\n\n\(super.text)"
+           "\(headercomment)\n\n# Do not modify!\n# This file was generated from a template using necronux.internal.pkl project.\n# Any changes should be made to the template, not this file.\n\n\(super.text)"
          else
-           "# Do not modify!\n# This file was generated from a template using the necronux internal pkl package.\n# Any changes should be made to the template, not this file.\n\n\(super.text)"
+           "# Do not modify!\n# This file was generated from a template using necronux.internal.pkl project.\n# Any changes should be made to the template, not this file.\n\n\(super.text)"
   renderer = new YamlRenderer {
     converters {
       ["runs-on"] = (runsOn: String|Machine|Listing<String|Machine>) ->
