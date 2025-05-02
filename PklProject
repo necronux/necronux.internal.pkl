@@ -23,7 +23,6 @@ package {
     "gradle/**"
     "gradlew"
     "gradlew.bat"
-    "tools/**"
     "build.gradle.kts"
     "settings.gradle.kts"
     "justfile"
