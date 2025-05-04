@@ -24,5 +24,11 @@ pkl {
         projectDirectories.from(file("."))
       }
     }
+
+    packagers {
+      register("makeInternalPkg") {
+        projectDirectories.from(file("."))
+      }
+    }
   }
 }
