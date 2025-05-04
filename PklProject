@@ -9,7 +9,7 @@ amends "pkl:Project"
 package {
   name = "necronux.internal.pkl"
   baseUri = "package://pkg.pkl-lang.org/necronux/\(name)"
-  version = "0.6.0-dev"
+  version = "0.5.2"
   packageZipUrl = "https://github.com/necronux/necronux.internal.pkl/releases/download/\(name)@\(version)/\(name)@\(version).zip"
   description = "Shared Pkl modules for internal use in repos in necronux org."
   authors {
