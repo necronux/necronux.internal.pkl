@@ -60,7 +60,7 @@ const function necronuxInternalPkl() = new gha.Job {
       name = "Upload pkgs, zips and sums"
       uses = ActReg.uploadArtifact
       with {
-        ["name"] = "necronux.internal.pkl-${{ inputs.release_tag }}"
+        ["name"] = "necronux.internal.pkl-${{ github.ref_name }}"
         ["overwrite"] = true
         ["compression-level"] = 9
         ["path"] = """

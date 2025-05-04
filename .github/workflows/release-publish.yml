@@ -92,7 +92,7 @@ jobs:
     - name: Upload pkgs, zips and sums
       uses: actions/upload-artifact@v4
       with:
-        name: necronux.internal.pkl-${{ inputs.release_tag }}
+        name: necronux.internal.pkl-${{ github.ref_name }}
         overwrite: true
         compression-level: 9
         path: |-
