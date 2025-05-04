@@ -31,7 +31,7 @@ const function necronuxInternalPkl() = new gha.Job {
       run = """
       pkgdir="build/generated/pkl/packages"
       echo "PKGDIR=$pkgdir" >> $GITHUB_ENV
-      echo "ARCHIVE=necronux.internal.pkl-${{ github.ref_name }}" >> $GITHUB_ENV
+      echo "ARCHIVE=${{ github.ref_name }}" >> $GITHUB_ENV
       """
       shell = "bash"
     }
@@ -39,10 +39,10 @@ const function necronuxInternalPkl() = new gha.Job {
       name = "Create directory for archive and transfer files"
       run = """
       mkdir -p "$ARCHIVE"
-      cp "$PKGDIR"/necronux.internal.pkl@${{ github.ref_name }} "$ARCHIVE"/
-      cp "$PKGDIR"/necronux.internal.pkl@${{ github.ref_name }}.sha256 "$ARCHIVE"/
-      cp "$PKGDIR"/necronux.internal.pkl@${{ github.ref_name }}.zip "$ARCHIVE"/
-      cp "$PKGDIR"/necronux.internal.pkl@${{ github.ref_name }}.zip.sha256 "$ARCHIVE"/
+      cp "$PKGDIR"/${{ github.ref_name }} "$ARCHIVE"/
+      cp "$PKGDIR"/${{ github.ref_name }}.sha256 "$ARCHIVE"/
+      cp "$PKGDIR"/${{ github.ref_name }}.zip "$ARCHIVE"/
+      cp "$PKGDIR"/${{ github.ref_name }}.zip.sha256 "$ARCHIVE"/
       """
       shell = "bash"
     }
@@ -60,7 +60,7 @@ const function necronuxInternalPkl() = new gha.Job {
       name = "Upload pkgs, zips and sums"
       uses = ActReg.uploadArtifact
       with {
-        ["name"] = "necronux.internal.pkl-${{ github.ref_name }}"
+        ["name"] = "${{ github.ref_name }}"
         ["overwrite"] = true
         ["compression-level"] = 9
         ["path"] = """
@@ -89,7 +89,7 @@ const function reuseSPDXSBOM() = new gha.Job {
     new {
       name =  "Determine archive name"
       run = """
-      echo "ARCHIVE=necronux.internal.pkl_sbom-${{ github.ref_name }}" >> $GITHUB_ENV
+      echo "ARCHIVE=sbom_${{ github.ref_name }}" >> $GITHUB_ENV
       """
       shell = "bash"
     }
@@ -115,7 +115,7 @@ const function reuseSPDXSBOM() = new gha.Job {
       name = "Upload tars and sums"
       uses = ActReg.uploadArtifact
       with {
-        ["name"] = "necronux.internal.pkl_sbom-${{ github.ref_name }}"
+        ["name"] = "sbom_${{ github.ref_name }}"
         ["overwrite"] = true
         ["compression-level"] = 9
         ["path"] = """

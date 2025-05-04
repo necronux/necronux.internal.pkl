@@ -20,13 +20,17 @@ const function releaseTag() = new gha.Job {
       name = "Display release tag"
       run = """
       echo "Release tag: ${{ github.ref_name }}"
+      TAG="${{ github.ref_name }}"
+      VERSION="${TAG#*@}"
+      echo "Release Version: $VERSION"
+      echo "RELEASE_VERSION=$VERSION" >> "$GITHUB_ENV"
       """
       shell = "bash"
     }
     new {
       name = "Check that tag version and necronux.internal.pkl PklProject version are the same"
       run = """
-      TAG_VERSION="${{ github.ref_name }}"
+      TAG_VERSION="${{ env.RELEASE_VERSION }}"
       PKL_PROJECT_VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' PklProject)
       echo "Extracted necronux.internal.pkl PklProject version: '$PKL_PROJECT_VERSION'"
       if [ "$TAG_VERSION" != "$PKL_PROJECT_VERSION" ]; then
@@ -39,7 +43,7 @@ const function releaseTag() = new gha.Job {
     new {
       name = "Check that tag version and internal.pkl.ci PklProject version are the same"
       run = """
-      TAG_VERSION="${{ github.ref_name }}"
+      TAG_VERSION="${{ env.RELEASE_VERSION }}"
       PKL_PROJECT_VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' tools/internal.pkl.ci/PklProject)
       echo "Extracted root PklProject version: '$PKL_PROJECT_VERSION'"
       if [ "$TAG_VERSION" != "$PKL_PROJECT_VERSION" ]; then

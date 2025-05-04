@@ -12,7 +12,7 @@ import ".../schemas/GitHubAction.pkl" as gha
 import ".../gha/ActionsRegistry.pkl" as ActReg
 import ".../gha/UtilsCommon.pkl"
 
-const function createRelease() = new gha.Job {
+const function createReleaseDraft() = new gha.Job {
   name = "Create GitHub Release"
   needs {
     "build-necronux-internal-pkl"
@@ -26,7 +26,7 @@ const function createRelease() = new gha.Job {
       name = "Download necronux.internal.pkl tars, zips and sums"
       uses = ActReg.downloadArtifact
       with {
-        ["name"] = "necronux.internal.pkl-${{ github.ref_name }}"
+        ["name"] = "${{ github.ref_name }}"
         ["path"] = "extract_these"
         ["merge-multiple"] = true
       }
@@ -35,7 +35,7 @@ const function createRelease() = new gha.Job {
       name = "Download SBOM tars, zips and sums"
       uses = ActReg.downloadArtifact
       with {
-        ["name"] = "necronux.internal.pkl_sbom-${{ github.ref_name }}"
+        ["name"] = "sbom_${{ github.ref_name }}"
         ["path"] = "extract_these"
         ["merge-multiple"] = true
       }
@@ -46,7 +46,7 @@ const function createRelease() = new gha.Job {
         mkdir -p extracted/
         cd extract_these
 
-        for tar_file in necronux.internal.pkl-*.tar.gz necronux.internal.pkl_sbom-*.tar.gz; do
+        for tar_file in necronux.internal.pkl@*.tar.gz sbom_necronux.internal.pkl@*.tar.gz; do
         if [ -f "$tar_file" ]; then
         echo "Extracting $tar_file"
         tar -xzvf "$tar_file" -C ../extracted
@@ -61,8 +61,8 @@ const function createRelease() = new gha.Job {
       name = "Create directory for release and transfer files"
       run = """
         mkdir -p rel_artifacts/
-        cp -r extracted/necronux.internal.pkl-${{ github.ref_name }}/* rel_artifacts/
-        cp -r extracted/necronux.internal.pkl_sbom-${{ github.ref_name }}/* rel_artifacts/
+        cp -r extracted/${{ github.ref_name }}/* rel_artifacts/
+        cp -r extracted/sbom_${{ github.ref_name }}/* rel_artifacts/
         """
       shell = "bash"
     }

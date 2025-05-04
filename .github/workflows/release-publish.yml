@@ -28,11 +28,16 @@ jobs:
         ref: ${{ github.ref }}
     - name: Display release tag
       shell: bash
-      run: 'echo "Release tag: ${{ github.ref_name }}"'
+      run: |-
+        echo "Release tag: ${{ github.ref_name }}"
+        TAG="${{ github.ref_name }}"
+        VERSION="${TAG#*@}"
+        echo "Release Version: $VERSION"
+        echo "RELEASE_VERSION=$VERSION" >> "$GITHUB_ENV"
     - name: Check that tag version and necronux.internal.pkl PklProject version are the same
       shell: bash
       run: |-
-        TAG_VERSION="${{ github.ref_name }}"
+        TAG_VERSION="${{ env.RELEASE_VERSION }}"
         PKL_PROJECT_VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' PklProject)
         echo "Extracted necronux.internal.pkl PklProject version: '$PKL_PROJECT_VERSION'"
         if [ "$TAG_VERSION" != "$PKL_PROJECT_VERSION" ]; then
@@ -42,7 +47,7 @@ jobs:
     - name: Check that tag version and internal.pkl.ci PklProject version are the same
       shell: bash
       run: |-
-        TAG_VERSION="${{ github.ref_name }}"
+        TAG_VERSION="${{ env.RELEASE_VERSION }}"
         PKL_PROJECT_VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' tools/internal.pkl.ci/PklProject)
         echo "Extracted root PklProject version: '$PKL_PROJECT_VERSION'"
         if [ "$TAG_VERSION" != "$PKL_PROJECT_VERSION" ]; then
@@ -73,15 +78,15 @@ jobs:
       run: |-
         pkgdir="build/generated/pkl/packages"
         echo "PKGDIR=$pkgdir" >> $GITHUB_ENV
-        echo "ARCHIVE=necronux.internal.pkl-${{ github.ref_name }}" >> $GITHUB_ENV
+        echo "ARCHIVE=${{ github.ref_name }}" >> $GITHUB_ENV
     - name: Create directory for archive and transfer files
       shell: bash
       run: |-
         mkdir -p "$ARCHIVE"
-        cp "$PKGDIR"/necronux.internal.pkl@${{ github.ref_name }} "$ARCHIVE"/
-        cp "$PKGDIR"/necronux.internal.pkl@${{ github.ref_name }}.sha256 "$ARCHIVE"/
-        cp "$PKGDIR"/necronux.internal.pkl@${{ github.ref_name }}.zip "$ARCHIVE"/
-        cp "$PKGDIR"/necronux.internal.pkl@${{ github.ref_name }}.zip.sha256 "$ARCHIVE"/
+        cp "$PKGDIR"/${{ github.ref_name }} "$ARCHIVE"/
+        cp "$PKGDIR"/${{ github.ref_name }}.sha256 "$ARCHIVE"/
+        cp "$PKGDIR"/${{ github.ref_name }}.zip "$ARCHIVE"/
+        cp "$PKGDIR"/${{ github.ref_name }}.zip.sha256 "$ARCHIVE"/
     - name: Build archive
       shell: bash
       run: |-
@@ -92,7 +97,7 @@ jobs:
     - name: Upload pkgs, zips and sums
       uses: actions/upload-artifact@v4
       with:
-        name: necronux.internal.pkl-${{ github.ref_name }}
+        name: ${{ github.ref_name }}
         overwrite: true
         compression-level: 9
         path: |-
@@ -116,7 +121,7 @@ jobs:
         args: spdx -o reuse.spdx
     - name: Determine archive name
       shell: bash
-      run: echo "ARCHIVE=necronux.internal.pkl_sbom-${{ github.ref_name }}" >> $GITHUB_ENV
+      run: echo "ARCHIVE=sbom_${{ github.ref_name }}" >> $GITHUB_ENV
     - name: Create directory for archive and transfer files
       shell: bash
       run: |-
@@ -132,13 +137,13 @@ jobs:
     - name: Upload tars and sums
       uses: actions/upload-artifact@v4
       with:
-        name: necronux.internal.pkl_sbom-${{ github.ref_name }}
+        name: sbom_${{ github.ref_name }}
         overwrite: true
         compression-level: 9
         path: |-
           ${{ env.ASSET }}
           ${{ env.ASSET_SUM }}
-  create-release:
+  create-release-draft:
     name: Create GitHub Release
     needs:
     - build-necronux-internal-pkl
@@ -151,13 +156,13 @@ jobs:
     - name: Download necronux.internal.pkl tars, zips and sums
       uses: actions/download-artifact@v4
       with:
-        name: necronux.internal.pkl-${{ github.ref_name }}
+        name: ${{ github.ref_name }}
         path: extract_these
         merge-multiple: true
     - name: Download SBOM tars, zips and sums
       uses: actions/download-artifact@v4
       with:
-        name: necronux.internal.pkl_sbom-${{ github.ref_name }}
+        name: sbom_${{ github.ref_name }}
         path: extract_these
         merge-multiple: true
     - name: Extract required files
@@ -166,7 +171,7 @@ jobs:
         mkdir -p extracted/
         cd extract_these
 
-        for tar_file in necronux.internal.pkl-*.tar.gz necronux.internal.pkl_sbom-*.tar.gz; do
+        for tar_file in necronux.internal.pkl@*.tar.gz sbom_necronux.internal.pkl@*.tar.gz; do
         if [ -f "$tar_file" ]; then
         echo "Extracting $tar_file"
         tar -xzvf "$tar_file" -C ../extracted
@@ -178,8 +183,8 @@ jobs:
       shell: bash
       run: |-
         mkdir -p rel_artifacts/
-        cp -r extracted/necronux.internal.pkl-${{ github.ref_name }}/* rel_artifacts/
-        cp -r extracted/necronux.internal.pkl_sbom-${{ github.ref_name }}/* rel_artifacts/
+        cp -r extracted/${{ github.ref_name }}/* rel_artifacts/
+        cp -r extracted/sbom_${{ github.ref_name }}/* rel_artifacts/
     - name: Publish github release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
