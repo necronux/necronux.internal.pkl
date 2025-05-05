@@ -8,16 +8,17 @@ amends "pkl:Project"
 
 package {
   name = "necronux.internal.pkl"
-  baseUri = "package://pkg.pkl-lang.org/necronux/\(name)"
+  baseUri = "package://pkg.pkl-lang.org/github.com/necronux/\(name)/\(name)"
   version = "0.6.0-dev"
-  packageZipUrl = "https://github.com/necronux/necronux.internal.pkl/releases/download/\(name)@\(version)/\(name)@\(version).zip"
+  packageZipUrl = "\(sourceCode)/releases/download/\(name)@\(version)/\(name)@\(version).zip"
   description = "Shared Pkl modules for internal use in repos in necronux org."
   authors {
     "Nayan (NayanTheSpaceGuy) <nayantsg@proton.me>"
   }
-  sourceCode = "https://github.com/necronux/necronux.internal.pkl/tree/\(name)@\(version)/packages/\(name)"
-  sourceCodeUrlScheme = "https://github.com/necronux/necronux.internal.pkl/blob/\(name)@\(version)/packages/\(name)%{path}#L%{line}-%{endLine}"
-  issueTracker = "https://github.com/necronux/necronux.internal.pkl/issues"
+  sourceCode = "https://github.com/necronux/\(name)"
+  sourceCodeUrlScheme = "\(sourceCode)/blob/\(name)@\(version)%{path}#L%{line}-%{endLine}"
+  license = "Apache-2.0"
+  issueTracker = "\(sourceCode)/issues"
   exclude {
     ".github/"
     "gradle/**"
