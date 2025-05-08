@@ -20,7 +20,6 @@ fi
 
 PKL_FILES=(
     "PklProject"
-    "tools/internal.pkl.ci/PklProject"
 )
 
 for PKL_FILE in "${PKL_FILES[@]}"; do
