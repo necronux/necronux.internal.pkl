@@ -29,6 +29,6 @@ jobs {
   ["reuse-action"] = (UtilsCommon.dummyJobUses("fsfe/reuse-action@v5")) {}
   ["rust-cache"] = (UtilsCommon.dummyJobUses("Swatinem/rust-cache@v2")) {}
   ["rust-toolchain"] = (UtilsCommon.dummyJobUses("dtolnay/rust-toolchain@v1")) {}
-  ["typos"] = (UtilsCommon.dummyJobUses("crate-ci/typos@v1.30.2")) {}
+  ["typos"] = (UtilsCommon.dummyJobUses("crate-ci/typos@v1.32.0")) {}
   ["upload-artifact"] = (UtilsCommon.dummyJobUses("actions/upload-artifact@v4")) {}
 }
