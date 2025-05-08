@@ -17,7 +17,7 @@ import "modules/release-build.pkl" as Build
 import "modules/release-draft-gh.pkl" as Github
 
 headercomment = UtilsCommon.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "Apache-2.0")
-name = "Release-Publish"
+name = "Release-Draft"
 permissions = (UtilsCommon.contentPermissions("read")) {}
 
 on {
