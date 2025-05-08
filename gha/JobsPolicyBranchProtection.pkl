@@ -5,20 +5,20 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module PolicyBranchProtectionJobs
+module JobsPolicyBranchProtection
 
-import ".../schemas/GitHubAction.pkl" as gha
+import "../schemas/GitHubAction.pkl" as gha
 
-import ".../gha/StepsCommon.pkl"
-import ".../gha/UtilsCommon.pkl"
+import "StepsCommon.pkl"
+import "UtilsCommon.pkl"
 
-const function protectMainBranch() = new gha.Job {
-  name = "Protect Main Branch"
+const function protectBranch(branch: String) = new gha.Job {
+  name = "Protect \(branch.capitalize()) Branch"
   steps {
     StepsCommon.checkout(null)
     new {
-      name = "Ensure PRs to main branch are only from allowed branches"
-      run = "tools/scripts/ci/protect-main-branch.sh"
+      name = "Ensure PRs to \(branch) branch are only from allowed branches"
+      run = "tools/scripts/ci/protect-\(branch)-branch.sh"
       shell = "bash"
     }
   }
