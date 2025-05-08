@@ -20,5 +20,5 @@ on {
   pull_request {}
 }
 jobs {
-  ["protect-main-branch"] = (PolBranchProtJobs.protectBranch("main")) {}
+  ["protect-main-branch"] = (PolBranchProtJobs.protectBranch("main", false)) {}
 }

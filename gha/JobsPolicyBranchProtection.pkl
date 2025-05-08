@@ -12,13 +12,13 @@ import "../schemas/GitHubAction.pkl" as gha
 import "StepsCommon.pkl"
 import "UtilsCommon.pkl"
 
-const function protectBranch(branch: String) = new gha.Job {
-  name = "Protect \(branch.capitalize()) Branch"
+const function protectBranch(branch: String, multiple: Boolean) = new gha.Job {
+  name = if (multiple) "Protect \(branch.capitalize()) Branches" else "Protect \(branch.capitalize()) Branch"
   steps {
     StepsCommon.checkout(null)
     new {
-      name = "Ensure PRs to \(branch) branch are only from allowed branches"
-      run = "tools/scripts/ci/protect-\(branch)-branch.sh"
+      name = if (multiple) "Ensure PRs to \(branch) branches are only from allowed branches" else "Ensure PRs to \(branch) branch are only from allowed branches"
+      run = if (multiple) "tools/scripts/ci/protect-\(branch)-branches.sh" else "tools/scripts/ci/protect-\(branch)-branch.sh"
       shell = "bash"
     }
   }
