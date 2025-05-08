@@ -5,16 +5,16 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module ReleasePublish
+module ReleaseDraft
 
 amends ".../schemas/GitHubAction.pkl"
 
 import ".../gha/JobsReleaseBuild.pkl"
 import ".../gha/UtilsCommon.pkl"
 
-import "modules/release-publish-build.pkl" as Build
-import "modules/release-publish-gh.pkl" as Github
-import "modules/release-publish-validate.pkl" as Validate
+import "modules/release-validate.pkl" as Validate
+import "modules/release-build.pkl" as Build
+import "modules/release-draft-gh.pkl" as Github
 
 headercomment = UtilsCommon.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "Apache-2.0")
 name = "Release-Publish"
