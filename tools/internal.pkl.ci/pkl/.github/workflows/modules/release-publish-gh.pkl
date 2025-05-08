@@ -13,7 +13,7 @@ import ".../gha/ActionsRegistry.pkl" as ActReg
 import ".../gha/UtilsCommon.pkl"
 
 const function createReleaseDraft() = new gha.Job {
-  name = "Create GitHub Release"
+  name = "Create GitHub Release Draft"
   needs {
     "build-necronux-internal-pkl"
     "generate-sbom"

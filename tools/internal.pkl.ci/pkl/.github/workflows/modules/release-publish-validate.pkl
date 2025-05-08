@@ -40,18 +40,5 @@ const function releaseTag() = new gha.Job {
       """
       shell = "bash"
     }
-    new {
-      name = "Check that tag version and internal.pkl.ci PklProject version are the same"
-      run = """
-      TAG_VERSION="${{ env.RELEASE_VERSION }}"
-      PKL_PROJECT_VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' tools/internal.pkl.ci/PklProject)
-      echo "Extracted root PklProject version: '$PKL_PROJECT_VERSION'"
-      if [ "$TAG_VERSION" != "$PKL_PROJECT_VERSION" ]; then
-        echo "Error: Tag version ("$TAG_VERSION") does not match tools/internal.pkl.ci/PklProject version ("$PKL_PROJECT_VERSION")"
-        exit 1
-      fi
-      """
-      shell = "bash"
-    }
   }
 } |> UtilsCommon.standardJobConfig(null, null)

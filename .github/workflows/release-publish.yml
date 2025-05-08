@@ -44,16 +44,6 @@ jobs:
           echo "Error: Tag version ("$TAG_VERSION") does not match necronux.internal.pkl PklProject version ("$PKL_PROJECT_VERSION")"
           exit 1
         fi
-    - name: Check that tag version and internal.pkl.ci PklProject version are the same
-      shell: bash
-      run: |-
-        TAG_VERSION="${{ env.RELEASE_VERSION }}"
-        PKL_PROJECT_VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' tools/internal.pkl.ci/PklProject)
-        echo "Extracted root PklProject version: '$PKL_PROJECT_VERSION'"
-        if [ "$TAG_VERSION" != "$PKL_PROJECT_VERSION" ]; then
-          echo "Error: Tag version ("$TAG_VERSION") does not match tools/internal.pkl.ci/PklProject version ("$PKL_PROJECT_VERSION")"
-          exit 1
-        fi
   build-necronux-internal-pkl:
     name: Build necronux.internal.pkl
     needs:
@@ -144,7 +134,7 @@ jobs:
           ${{ env.ASSET }}
           ${{ env.ASSET_SUM }}
   create-release-draft:
-    name: Create GitHub Release
+    name: Create GitHub Release Draft
     needs:
     - build-necronux-internal-pkl
     - generate-sbom
