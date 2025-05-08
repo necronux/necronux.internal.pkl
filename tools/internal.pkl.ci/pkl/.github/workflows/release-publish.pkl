@@ -29,11 +29,20 @@ on {
 }
 jobs {
   ["validate-release-tag"] = (Validate.releaseTag()) {}
-  ["build-necronux-internal-pkl"] = (Build.necronuxInternalPkl()) {}
+  ["build-necronux-internal-pkl"] = (Build.necronuxInternalPkl()) {
+    needs {
+      "validate-release-tag"
+    }
+  }
   ["generate-sbom"] = (JobsReleaseBuild.reuseSPDXSBOM("${{ github.ref }}","${{ github.ref_name }}")) {
     needs {
       "validate-release-tag"
     }
   }
-  ["create-release-draft"] = (Github.createReleaseDraft()) {}
+  ["create-release-draft"] = (Github.createReleaseDraft()) {
+    needs {
+      "build-necronux-internal-pkl"
+      "generate-sbom"
+    }
+  }
 }
