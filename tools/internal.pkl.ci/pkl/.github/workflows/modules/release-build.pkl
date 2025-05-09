@@ -16,7 +16,7 @@ import ".../gha/UtilsCommon.pkl"
 const function necronuxInternalPkl() = new gha.Job {
   name = "Build necronux.internal.pkl"
   steps {
-    StepsCommon.checkoutWithRef(1, "${{ github.ref }}")
+    StepsCommon.checkoutWithRef(0, "${{ github.ref }}")
     StepsCommon.installAction("just")
     new {
       name = "Build release package"

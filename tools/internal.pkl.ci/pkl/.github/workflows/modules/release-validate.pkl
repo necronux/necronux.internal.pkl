@@ -15,7 +15,7 @@ import ".../gha/UtilsCommon.pkl"
 const function releaseTag() = new gha.Job {
   name = "Validate Release Tag"
   steps {
-    StepsCommon.checkoutWithRef(1, "${{ github.ref }}")
+    StepsCommon.checkoutWithRef(0, "${{ github.ref }}")
     new {
       name = "Display release tag"
       run = """
