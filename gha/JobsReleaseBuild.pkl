@@ -16,7 +16,7 @@ import "UtilsCommon.pkl"
 const function reuseSPDXSBOM(ref: String, archive: String) = new gha.Job {
   name = "Generate REUSE SPDX SBOM"
   steps {
-    StepsCommon.checkoutWithRef(1, ref)
+    StepsCommon.checkoutWithRef(0, ref)
     new {
       name = "REUSE SPDX SBOM"
       uses = ActReg.reuseAction
