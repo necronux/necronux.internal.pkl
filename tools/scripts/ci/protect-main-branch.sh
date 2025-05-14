@@ -22,7 +22,7 @@ ALLOWED_PREFIXES=(
 # Convert array to regex pattern
 ALLOWED_PATTERN="^($(IFS='|'; echo "${ALLOWED_PREFIXES[*]}"))"
 
-# Check if the pull request is targeting the develop branch
+# Check if the pull request is targeting the branch
 if [[ "$GITHUB_BASE_REF" == "$TARGET_BRANCH" ]]; then
     # Check if the source branch follows the allowed naming pattern
     if ! [[ "$GITHUB_HEAD_REF" =~ $ALLOWED_PATTERN ]]; then
