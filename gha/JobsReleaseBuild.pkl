@@ -13,7 +13,7 @@ import "ActionsRegistry.pkl" as ActReg
 import "StepsCommon.pkl"
 import "UtilsCommon.pkl"
 
-const function reuseSPDXSBOM(ref: String, archive: String) = new gha.Job {
+const function reuseSPDXSBOM(ref: String, archivePrefix: String?, archiveTag: String) = new gha.Job {
   name = "Generate REUSE SPDX SBOM"
   steps {
     StepsCommon.checkoutWithRef(0, ref)
@@ -27,7 +27,7 @@ const function reuseSPDXSBOM(ref: String, archive: String) = new gha.Job {
     new {
       name =  "Determine archive name"
       run = """
-      echo "ARCHIVE=sbom_\(archive)" >> $GITHUB_ENV
+      echo "ARCHIVE=sbom_\(archiveTag)" >> $GITHUB_ENV
       """
       shell = "bash"
     }
@@ -53,7 +53,7 @@ const function reuseSPDXSBOM(ref: String, archive: String) = new gha.Job {
       name = "Upload tars and sums"
       uses = ActReg.uploadArtifact
       with {
-        ["name"] = "sbom_\(archive)"
+        ["name"] = if (archivePrefix == null) "sbom_\(archiveTag)" else "sbom_\(archivePrefix)-\(archiveTag)"
         ["overwrite"] = true
         ["compression-level"] = 9
         ["path"] = """
