@@ -34,7 +34,7 @@ jobs {
       "validate-release-tag"
     }
   }
-  ["generate-sbom"] = (JobsReleaseBuild.reuseSPDXSBOM("${{ github.ref }}","${{ github.ref_name }}")) {
+  ["generate-sbom"] = (JobsReleaseBuild.reuseSPDXSBOM("${{ github.ref }}", null, "${{ github.ref_name }}")) {
     needs {
       "validate-release-tag"
     }
