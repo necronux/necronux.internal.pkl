@@ -46,7 +46,7 @@ jobs:
           if ! [[ "$GITHUB_HEAD_REF" =~ $ALLOWED_PATTERN ]]; then
             printf "Error: Pull requests to '%s' can only be from these branches:\n" "$GITHUB_BASE_REF"
             for branch in "${ALLOWED_PREFIXES[@]}"; do
-              printf "   - %s\n" "$branch"
+              printf " - %s\n" "$branch"
             done
             exit 1
           else
