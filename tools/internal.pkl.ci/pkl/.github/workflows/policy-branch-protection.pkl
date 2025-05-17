@@ -9,7 +9,7 @@ module PolicyBranchProtection
 
 amends ".../schemas/GitHubAction.pkl"
 
-import ".../gha/JobsPolicyBranchProtection.pkl" as PolBranchProtJobs
+import ".../gha/JobsPolicyBranchProtection.pkl" as JobsPolBranchProt
 import ".../gha/UtilsCommon.pkl"
 
 headercomment = UtilsCommon.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "Apache-2.0")
@@ -20,7 +20,7 @@ on {
   pull_request {}
 }
 jobs {
-  ["protect-main-branch"] = (PolBranchProtJobs.whitelistPRHeadsToBranch("main", """
+  ["protect-main-branch"] = (JobsPolBranchProt.whitelistPRHeadsToBranch("main", """
   "feature/"
   "bugfix/"
   "refactor/"
