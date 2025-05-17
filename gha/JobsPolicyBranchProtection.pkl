@@ -23,3 +23,43 @@ const function protectBranch(branch: String, multiple: Boolean) = new gha.Job {
     }
   }
 } |> UtilsCommon.standardJobConfig(null, null)
+
+const function whitelistPRHeadsToBranch(targetBranch: String, allowedPrefixes: String) = new gha.Job {
+  name = "Protect \(targetBranch.capitalize()) Branch"
+  steps {
+    StepsCommon.checkout(null)
+    new {
+      name = "Ensure PRs to \(targetBranch) branch are only from allowed branches"
+      run = """
+        # Define target branch
+        TARGET_BRANCH="\(targetBranch)"
+
+        # Define allowed branch prefixes as an array
+        ALLOWED_PREFIXES=(\(allowedPrefixes))
+
+        # Convert array to regex pattern
+        ALLOWED_PATTERN="^($(IFS='|'; echo "${ALLOWED_PREFIXES[*]}"))"
+
+        # Check if the pull request is targeting the branch
+        if [[ "$GITHUB_BASE_REF" == "$TARGET_BRANCH" ]]; then
+          # Check if the source branch follows the allowed naming pattern
+          if ! [[ "$GITHUB_HEAD_REF" =~ $ALLOWED_PATTERN ]]; then
+            printf "Error: Pull requests to '%s' can only be from these branches:\n" "$GITHUB_BASE_REF"
+            for branch in "${ALLOWED_PREFIXES[@]}"; do
+              printf "   - %s\n" "$branch"
+            done
+            exit 1
+          else
+            echo "Pull request to '$TARGET_BRANCH' from allowed branch '$GITHUB_HEAD_REF'."
+          fi
+        else
+          # If not targeting the target branch, skip the check
+          echo "Pull request is not targeting '$TARGET_BRANCH'; skipping the check."
+        fi
+
+        exit 0
+        """
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)
