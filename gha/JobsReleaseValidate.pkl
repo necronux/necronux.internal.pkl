@@ -1,0 +1,53 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module JobsReleaseValidate
+
+import "../schemas/GitHubAction.pkl" as gha
+
+import "StepsCommon.pkl"
+import "UtilsCommon.pkl"
+
+const function releaseType(ref: String, relTagVerFilter: String, relType: String) = new gha.Job {
+  name = "Validate Release Type"
+  steps {
+    StepsCommon.checkoutWithRef(0, ref)
+    new {
+      name = "Display release type"
+      run = """
+      echo "Release type: \(relType)"
+      """
+      shell = "bash"
+    }
+    new {
+      name = "Check if selected release type matches release tag"
+      run = """
+      TAG="\(ref)"
+      release_tag="\(relTagVerFilter)"
+      release_type="\(relType)"
+
+      if [[ "$release_type" == "stable-release" ]]; then
+        if [[ "$release_tag" =~ -[a-zA-Z0-9]+ ]]; then
+          echo "Error: Stable release tags should not contain pre-release identifiers."
+          exit 1
+        fi
+      elif [[ "$release_type" == "pre-release" ]]; then
+        if [[ ! "$release_tag" =~ -[a-zA-Z0-9]+ ]]; then
+          echo "Error: Pre-release tags must contain a pre-release identifier."
+          exit 1
+        fi
+      else
+        echo "Error: Invalid release type."
+        exit 1
+      fi
+
+      echo "Release type and tag format are correctly matched."
+      """
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)

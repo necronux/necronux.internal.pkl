@@ -17,7 +17,7 @@ import "UtilsCommon.pkl"
 // which we want to avoid. By using !cancelled(), we ensure the job won't run
 // if the workflow is manually canceled.
 
-const function conclusionAll() = new gha.Job {
+const function conclusion() = new gha.Job {
   name = "Conclusion"
   `if` = "${{ !cancelled() }}"
   permissions = (UtilsCommon.contentPermissions("none")) {}
@@ -33,13 +33,3 @@ const function conclusionAll() = new gha.Job {
     }
   }
 } |> UtilsCommon.standardJobConfig(null, null)
-
-const function conclusionPR(ref: String) = (conclusionAll()) {
-  name = "Conclusion PR"
-  `if` = UtilsCommon.ifRefOrPrOrWDPrAndNotCancelled(ref)
-}
-
-const function conclusionPush(ref: String) = (conclusionAll()) {
-  name = "Conclusion Push"
-  `if` = UtilsCommon.ifRefOrPushOrWDPushAndNotCancelled(ref)
-}

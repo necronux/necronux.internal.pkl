@@ -9,18 +9,20 @@ module TriggersCommon
 
 import "../schemas/GitHubAction.pkl" as gha
 
-const function wDispatchEventSim(opts: Listing<String>) = new gha.WorkflowInput {
+const function wDispatchEventSim(opts: Listing<String>, defaultOpt: String) = new gha.WorkflowInput {
   description = "Specify which event to simulate"
   required = false
   type = "choice"
   options = (opts) {}
+  default = defaultOpt
 }
 
-const function wDispatchReleaseType(opts: Listing<String>) = new gha.WorkflowInput {
+const function wDispatchReleaseType(opts: Listing<String>, defaultOpt: String) = new gha.WorkflowInput {
   description = "Choose type of release"
   required = true
   type = "choice"
   options = (opts) {}
+  default = defaultOpt
 }
 
 const function wDispatchReleaseTag() = new gha.WorkflowInput {

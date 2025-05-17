@@ -20,5 +20,13 @@ on {
   pull_request {}
 }
 jobs {
-  ["protect-main-branch"] = (PolBranchProtJobs.protectBranch("main", false)) {}
+  ["protect-main-branch"] = (PolBranchProtJobs.whitelistPRHeadsToBranch("main", """
+  "feature/"
+  "bugfix/"
+  "refactor/"
+  "chore/"
+  "bump/"
+  "dependabot/"
+  """
+  )) {}
 }
