@@ -40,7 +40,17 @@ const function setupRustCache(key: String, saveIf: String|Boolean) = new gha.Ste
   uses = ActReg.rustCache
   with {
     ["prefix-key"] = "rs"
+    ["key"] = key
     ["save-if"] = saveIf
-    ["key"] = "[\(key)]"
+  }
+}
+
+const function setupRustCacheWithSharedKey(sharedKey: String, saveIf: String|Boolean) = new gha.Step {
+  name = "Setup rust cache"
+  uses = ActReg.rustCache
+  with {
+    ["prefix-key"] = "rs"
+    ["shared-key"] = sharedKey
+    ["save-if"] = saveIf
   }
 }
