@@ -11,6 +11,7 @@
 # Pkl
 /tools/**/build/
 /tools/**/.out/
+/.out/
 
 # SBOM
 /reuse.spdx

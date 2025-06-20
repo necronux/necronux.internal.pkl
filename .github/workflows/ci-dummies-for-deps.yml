@@ -32,6 +32,11 @@ jobs:
     timeout-minutes: 30
     steps:
     - uses: actions/checkout@v4
+  deploy-pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: actions/deploy-pages@v4
   download-artifact:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -72,3 +77,8 @@ jobs:
     timeout-minutes: 30
     steps:
     - uses: actions/upload-artifact@v4
+  upload-pages-artifact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: actions/upload-pages-artifact@v3

@@ -1,0 +1,62 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module ReleasePklDoc
+
+import ".../schemas/GitHubAction.pkl" as gha
+
+import ".../gha/ActionsRegistry.pkl" as ActReg
+import ".../gha/StepsCommon.pkl"
+import ".../gha/UtilsCommon.pkl"
+
+const function generatePklDoc() = new gha.Job {
+  name = "Generate Pkl Doc"
+  permissions {
+    contents = "write"
+  }
+  steps {
+    StepsCommon.checkout(0)
+    new {
+      name = "Install jbang"
+      run = """
+        curl -Ls https://sh.jbang.dev | bash -s - app setup
+        echo "$HOME/.jbang/bin" >> $GITHUB_PATH
+        """
+    }
+    new {
+      name = "Generate pkl doc"
+      run = """
+      jbang run --main org.pkl.doc.Main \\"org.pkl-lang:pkl-doc:0.28.2\\"  gha/*.pkl schemas/*.pkl -o docs
+      """
+    }
+    new {
+      name = "Upload artifact for GitHub Pages"
+      uses = ActReg.uploadPagesArtifact
+      with {
+        ["path"] = "docs"
+      }
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)
+
+const function deployDocToPages() = new gha.Job {
+  permissions {
+    pages = "write"
+    `id-token` = "write"
+  }
+  environment {
+    name = "gh-pages"
+    url = "${{ steps.deployment.outputs.page_url }}"
+  }
+  steps {
+    new {
+      name = "Deploy to GitHub Pages"
+      id = "deployment"
+      uses = ActReg.deployPages
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)

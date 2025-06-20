@@ -1,0 +1,54 @@
+# ==-----------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: Apache-2.0
+# ==-----------------------------------------------------------== #
+
+# Do not modify!
+# This file was generated from a template using necronux.internal.pkl project.
+# Any changes should be made to the template, not this file.
+
+name: Release-Pkl-Doc
+'on':
+  push:
+    branches:
+    - main
+permissions:
+  contents: read
+jobs:
+  generate-pkl-doc:
+    name: Generate Pkl Doc
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Install jbang
+      run: |-
+        curl -Ls https://sh.jbang.dev | bash -s - app setup
+        echo "$HOME/.jbang/bin" >> $GITHUB_PATH
+    - name: Generate pkl doc
+      run: jbang run --main org.pkl.doc.Main \"org.pkl-lang:pkl-doc:0.28.2\"  gha/*.pkl schemas/*.pkl -o docs
+    - name: Upload artifact for GitHub Pages
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: docs
+  deploy-doc-to-pages:
+    needs:
+    - generate-pkl-doc
+    permissions:
+      id-token: write
+      pages: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: gh-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4

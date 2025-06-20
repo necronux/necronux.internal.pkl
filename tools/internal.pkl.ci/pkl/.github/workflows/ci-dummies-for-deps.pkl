@@ -23,6 +23,7 @@ jobs {
   ["action-gh-release"] = (UtilsCommon.dummyJobUses("softprops/action-gh-release@v2")) {}
   ["cargo-deny-action"] = (UtilsCommon.dummyJobUses("EmbarkStudios/cargo-deny-action@v2")) {}
   ["checkout"] = (UtilsCommon.dummyJobUses("actions/checkout@v4")) {}
+  ["deploy-pages"] = (UtilsCommon.dummyJobUses("actions/deploy-pages@v4")) {}
   ["download-artifact"] = (UtilsCommon.dummyJobUses("actions/download-artifact@v4")) {}
   ["github-script"] = (UtilsCommon.dummyJobUses("actions/github-script@v7")) {}
   ["install-action"] = (UtilsCommon.dummyJobUses("taiki-e/install-action@v2")) {}
@@ -31,4 +32,5 @@ jobs {
   ["rust-toolchain"] = (UtilsCommon.dummyJobUses("dtolnay/rust-toolchain@v1")) {}
   ["typos"] = (UtilsCommon.dummyJobUses("crate-ci/typos@v1.32.0")) {}
   ["upload-artifact"] = (UtilsCommon.dummyJobUses("actions/upload-artifact@v4")) {}
+  ["upload-pages-artifact"] = (UtilsCommon.dummyJobUses("actions/upload-pages-artifact@v3")) {}
 }
