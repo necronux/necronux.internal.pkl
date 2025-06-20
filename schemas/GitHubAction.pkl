@@ -5,7 +5,7 @@
 // SPDX-License-Identifier: MIT
 // ==-----------------------------------------------------------== //
 
-module com.github.GitHubAction
+module necronux.internal.pkl.schemas.GitHubAction
 
 // Definitions
 

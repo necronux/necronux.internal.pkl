@@ -5,7 +5,7 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module StepsCommon
+module necronux.internal.pkl.gha.StepsCommon
 
 import "../schemas/GitHubAction.pkl" as gha
 

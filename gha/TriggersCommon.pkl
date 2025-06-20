@@ -5,7 +5,7 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module TriggersCommon
+module necronux.internal.pkl.gha.TriggersCommon
 
 import "../schemas/GitHubAction.pkl" as gha
 

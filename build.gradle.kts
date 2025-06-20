@@ -31,4 +31,17 @@ pkl {
       }
     }
   }
+
+  pkldocGenerators {
+    register("makeInternalPklDoc") {
+      projectDir.set(file("."))
+
+      sourceModules.set(fileTree(projectDir) {
+        include("gha/*.pkl")
+        include("schemas/*.pkl")
+        include("doc-package-info.pkl")
+        include("docsite-info.pkl")
+      })
+    }
+  }
 }

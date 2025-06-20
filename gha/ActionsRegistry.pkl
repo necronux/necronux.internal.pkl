@@ -5,7 +5,7 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module ActionsRegistry
+module necronux.internal.pkl.gha.ActionsRegistry
 
 import "../tools/internal.pkl.ci/pkl/.github/workflows/ci-dummies-for-deps.pkl" as Dummy
 

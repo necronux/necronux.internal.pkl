@@ -12,6 +12,8 @@ amends ".../schemas/GitHubAction.pkl"
 import ".../gha/JobsReleasePklDoc.pkl" as JobsPklDoc
 import ".../gha/UtilsCommon.pkl"
 
+import "modules/release-pkl-doc-jobs.pkl" as ReleaseDocJobs
+
 headercomment = UtilsCommon.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "Apache-2.0")
 name = "Release-Pkl-Doc"
 permissions = (UtilsCommon.contentPermissions("read")) {}
@@ -24,7 +26,7 @@ on {
   }
 }
 jobs {
-  ["generate-pkl-doc"] = (JobsPklDoc.generatePklDoc("0.27.0", "gha/*.pkl schemas/*.pkl *.pkl")) {}
+  ["generate-pkl-doc"] = (ReleaseDocJobs.generatePklDoc()) {}
   ["deploy-doc-to-pages"] = (JobsPklDoc.deployDocToPages()) {
     needs {
       "generate-pkl-doc"

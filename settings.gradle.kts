@@ -9,7 +9,7 @@ rootProject.name = "necronux.internal.pkl"
 include("tools:internal.pkl.ci")
 
 pluginManagement {
-    repositories {
-        mavenCentral()
-    }
+  repositories {
+    mavenCentral()
+  }
 }

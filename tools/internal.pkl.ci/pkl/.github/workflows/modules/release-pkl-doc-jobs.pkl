@@ -1,0 +1,37 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module ReleasePklDocJobs
+
+import ".../schemas/GitHubAction.pkl" as gha
+
+import ".../gha/ActionsRegistry.pkl" as ActReg
+import ".../gha/StepsCommon.pkl"
+import ".../gha/UtilsCommon.pkl"
+
+const function generatePklDoc() = new gha.Job {
+  name = "Generate Pkl Doc"
+  permissions {
+    contents = "write"
+  }
+  steps {
+    StepsCommon.checkout(null)
+    StepsCommon.installAction("just")
+    new {
+      name = "Generate pkl doc"
+      run = "just make-internalPklDoc"
+      shell = "bash"
+    }
+    new {
+      name = "Upload artifact for GitHub Pages"
+      uses = ActReg.uploadPagesArtifact
+      with {
+        ["path"] = "build/pkldoc/makeInternalPklDoc"
+      }
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)

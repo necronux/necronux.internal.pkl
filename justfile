@@ -11,6 +11,7 @@ sbom:
 runpkl:
     just resolve
     just eval
+    just doc
 
 resolve:
     just resolve-internal
@@ -19,6 +20,9 @@ resolve:
 eval:
     just eval-internal
     just eval-internalpklci
+
+doc:
+  just make-internalpkldoc
 
 # Following subcommands are used in ci
 
@@ -37,3 +41,6 @@ eval-internalpklci:
 
 make-internalpkg:
     ./gradlew makeInternalPkg
+
+make-internalpkldoc:
+    ./gradlew makeInternalPklDoc
