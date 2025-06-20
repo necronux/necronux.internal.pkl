@@ -32,7 +32,7 @@ jobs:
         curl -Ls https://sh.jbang.dev | bash -s - app setup
         echo "$HOME/.jbang/bin" >> $GITHUB_PATH
     - name: Generate pkl doc
-      run: jbang run --main org.pkl.doc.Main \"org.pkl-lang:pkl-doc:0.26.3\"  gha/*.pkl schemas/*.pkl -o docs
+      run: jbang run --main org.pkl.doc.Main "org.pkl-lang:pkl-doc:0.28.2" gha/*.pkl schemas/*.pkl -o docs
     - name: Upload artifact for GitHub Pages
       uses: actions/upload-pages-artifact@v3
       with:
