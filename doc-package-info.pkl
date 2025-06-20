@@ -1,0 +1,20 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+/// The necronux internal pkl package.
+///
+/// The necronux internal pkl package contains a set of Pkl modules intended for
+/// shared internal use across repositories in the necronux organization.
+amends "pkl:DocPackageInfo"
+
+name = "necronux.internal.pkl"
+version = "0.8.0-dev"
+importUri = "package://pkg.pkl-lang.org/github.com/necronux/\(name)/\(name)@\(version)/"
+authors {
+  "Nayan (NayanTheSpaceGuy) <nayantsg@proton.me>"
+}
+sourceCode = "https://github.com/necronux/\(name)"
+issueTracker = "\(sourceCode)/issues"
