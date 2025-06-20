@@ -14,6 +14,7 @@ import "StepsCommon.pkl"
 import "UtilsCommon.pkl"
 
 const function deployDocToPages() = new gha.Job {
+  name = "Deploy Pkl Doc to GitHub Pages"
   permissions {
     pages = "write"
     `id-token` = "write"

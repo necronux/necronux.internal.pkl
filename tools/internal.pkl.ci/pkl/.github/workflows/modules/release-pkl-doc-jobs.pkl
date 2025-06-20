@@ -23,7 +23,7 @@ const function generatePklDoc() = new gha.Job {
     StepsCommon.installAction("just")
     new {
       name = "Generate pkl doc"
-      run = "just make-internalPklDoc"
+      run = "just make-internalpkldoc"
       shell = "bash"
     }
     new {

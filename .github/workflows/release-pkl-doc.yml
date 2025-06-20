@@ -33,12 +33,13 @@ jobs:
         tool: just
     - name: Generate pkl doc
       shell: bash
-      run: just make-internalPklDoc
+      run: just make-internalpkldoc
     - name: Upload artifact for GitHub Pages
       uses: actions/upload-pages-artifact@v3
       with:
         path: build/pkldoc/makeInternalPklDoc
   deploy-doc-to-pages:
+    name: Deploy Pkl Doc to GitHub Pages
     needs:
     - generate-pkl-doc
     permissions:
