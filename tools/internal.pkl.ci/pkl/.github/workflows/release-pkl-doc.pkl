@@ -24,7 +24,7 @@ on {
   }
 }
 jobs {
-  ["generate-pkl-doc"] = (JobsPklDoc.generatePklDoc()) {}
+  ["generate-pkl-doc"] = (JobsPklDoc.generatePklDoc("gha/*.pkl schemas/*.pkl *.pkl")) {}
   ["deploy-doc-to-pages"] = (JobsPklDoc.deployDocToPages()) {
     needs {
       "generate-pkl-doc"

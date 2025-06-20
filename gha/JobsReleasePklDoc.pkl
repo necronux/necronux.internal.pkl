@@ -13,7 +13,7 @@ import "ActionsRegistry.pkl" as ActReg
 import "StepsCommon.pkl"
 import "UtilsCommon.pkl"
 
-const function generatePklDoc() = new gha.Job {
+const function generatePklDoc(pklPaths: String) = new gha.Job {
   name = "Generate Pkl Doc"
   permissions {
     contents = "write"
@@ -30,7 +30,7 @@ const function generatePklDoc() = new gha.Job {
     new {
       name = "Generate pkl doc"
       run = """
-      jbang run --main org.pkl.doc.Main \"org.pkl-lang:pkl-doc:0.26.3\" gha/*.pkl schemas/*.pkl -o docs
+      jbang run --main org.pkl.doc.Main \"org.pkl-lang:pkl-doc:0.26.3\" \(pklPaths) -o docs
       """
     }
     new {
