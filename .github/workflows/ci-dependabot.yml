@@ -34,6 +34,19 @@ jobs:
         dependency_name=$(jq -r '.[0].dependencyName' deps.json)
         previous_version=$(jq -r '.[0].prevVersion' deps.json)
         new_version=$(jq -r '.[0].newVersion' deps.json)
+
+        if [[ -z "$previous_version" || -z "$new_version" ]]; then
+          pr_title="${{ github.event.pull_request.title }}"
+          echo "Dependabot PR title: $pr_title"
+          previous_version=$(echo "$pr_title" | grep -oP 'from v?\K[0-9\.]+')
+          new_version=$(echo "$pr_title" | grep -oP 'to v?\K[0-9\.]+')
+        fi
+
+        if [[ -z "$dependency_name" || -z "$previous_version" || -z "$new_version" ]]; then
+          echo "::error::Could not determine dependency name or versions. Aborting."
+          exit 1
+        fi
+
         echo "previous-dependency-name=$dependency_name@v$previous_version" >> $GITHUB_OUTPUT
         echo "new-dependency-name=$dependency_name@v$new_version" >> $GITHUB_OUTPUT
   updatePklWorkflows:
@@ -62,7 +75,7 @@ jobs:
         done
     - name: Commit and push changes
       run: |-
-        git config --global user.name 'github-actions[bot]'
+        git config --global user.name "github-actions[bot]"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git commit -am "Update pkl workflows"
         git push origin
