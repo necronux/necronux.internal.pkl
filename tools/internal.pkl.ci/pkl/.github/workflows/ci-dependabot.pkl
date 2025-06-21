@@ -1,0 +1,31 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module CiDependabot
+
+amends ".../schemas/GitHubAction.pkl"
+
+import ".../gha/JobsConcl.pkl"
+import ".../gha/UtilsCommon.pkl"
+
+import "modules/ci-dependabot-jobs.pkl" as CiDependabotJobs
+
+headercomment = UtilsCommon.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "Apache-2.0")
+name = "CI-Dependabot"
+permissions = (UtilsCommon.contentPermissions("read")) {}
+
+on {
+  pull_request {}
+}
+jobs {
+  ["checkActionUpdate"] = (CiDependabotJobs.checkActionUpdate()) {}
+  ["updatePklWorkflows"] = (CiDependabotJobs.updatePklWorkflows()) {
+    needs {
+      "checkActionUpdate"
+    }
+  }
+}

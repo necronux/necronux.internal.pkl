@@ -26,7 +26,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        fetch-depth: 1
+        fetch-depth: 0
+    - name: Setup worktree for docs
+      run: |-
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git worktree add tmp-docs docs
     - name: Install just
       uses: taiki-e/install-action@v2
       with:
@@ -34,10 +39,16 @@ jobs:
     - name: Generate pkl doc
       shell: bash
       run: just make-internalpkldoc
+    - name: Update docs in docs branch and push
+      working-directory: tmp-docs
+      run: |-
+        git add .
+        git commit --amend -m "Update docs"
+        git push --force origin docs
     - name: Upload artifact for GitHub Pages
       uses: actions/upload-pages-artifact@v3
       with:
-        path: build/pkldoc/makeInternalPklDoc
+        path: tmp-docs
   deploy-doc-to-pages:
     name: Deploy Pkl Doc to GitHub Pages
     needs:

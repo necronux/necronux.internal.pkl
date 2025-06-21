@@ -19,7 +19,15 @@ const function generatePklDoc() = new gha.Job {
     contents = "write"
   }
   steps {
-    StepsCommon.checkout(null)
+    StepsCommon.checkout(0)
+    new {
+      name = "Setup worktree for docs"
+      run = """
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git worktree add tmp-docs docs
+        """
+    }
     StepsCommon.installAction("just")
     new {
       name = "Generate pkl doc"
@@ -27,10 +35,19 @@ const function generatePklDoc() = new gha.Job {
       shell = "bash"
     }
     new {
+      name = "Update docs in docs branch and push"
+      `working-directory` = "tmp-docs"
+      run = """
+        git add .
+        git commit --amend -m "Update docs"
+        git push --force origin docs
+        """
+    }
+    new {
       name = "Upload artifact for GitHub Pages"
       uses = ActReg.uploadPagesArtifact
       with {
-        ["path"] = "build/pkldoc/makeInternalPklDoc"
+        ["path"] = "tmp-docs"
       }
     }
   }

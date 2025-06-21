@@ -25,6 +25,7 @@ jobs {
   ["checkout"] = (UtilsCommon.dummyJobUses("actions/checkout@v4")) {}
   ["deploy-pages"] = (UtilsCommon.dummyJobUses("actions/deploy-pages@v4")) {}
   ["download-artifact"] = (UtilsCommon.dummyJobUses("actions/download-artifact@v4")) {}
+  ["fetch-metadata"] = (UtilsCommon.dummyJobUses("dependabot/fetch-metadata@v2")) {}
   ["github-script"] = (UtilsCommon.dummyJobUses("actions/github-script@v7")) {}
   ["install-action"] = (UtilsCommon.dummyJobUses("taiki-e/install-action@v2")) {}
   ["reuse-action"] = (UtilsCommon.dummyJobUses("fsfe/reuse-action@v5")) {}

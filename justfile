@@ -11,7 +11,6 @@ sbom:
 runpkl:
     just resolve
     just eval
-    just doc
 
 resolve:
     just resolve-internal

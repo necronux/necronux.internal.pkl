@@ -1,0 +1,66 @@
+# ==-----------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: Apache-2.0
+# ==-----------------------------------------------------------== #
+
+# Do not modify!
+# This file was generated from a template using necronux.internal.pkl project.
+# Any changes should be made to the template, not this file.
+
+name: CI-Dependabot
+'on':
+  pull_request: {}
+permissions:
+  contents: read
+jobs:
+  checkActionUpdate:
+    name: Check Action Update
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      shouldUpdatePklWorkflows: ${{ steps.dependabotMetadata.outputs.package-ecosystem == 'github-action' }}
+      previousDependencyName: ${{ steps.dependencyName.outputs.previous-dependency-name }}
+      newDependencyName: ${{ steps.dependencyName.outputs.new-dependency-name }}
+    steps:
+    - name: Fetch dependabot metadata
+      id: dependabotMetadata
+      uses: dependabot/fetch-metadata@v2
+    - name: Get dependency name
+      id: dependencyName
+      run: |-
+        echo '${{ steps.dependabotMetadata.outputs.updated-dependencies-json }}' > deps.json
+        dependency_name=$(jq -r '.[0].dependencyName' deps.json)
+        previous_version=$(jq -r '.[0].prevVersion' deps.json)
+        new_version=$(jq -r '.[0].newVersion' deps.json)
+        echo "previous-dependency-name=$dependency_name@v$previous_version" >> $GITHUB_OUTPUT
+        echo "new-dependency-name=$dependency_name@v$new_version" >> $GITHUB_OUTPUT
+  updatePklWorkflows:
+    name: Update Pkl Workflows
+    if: ${{ needs.checkActionUpdate.outputs.shouldUpdatePklWorkflows }}
+    needs:
+    - checkActionUpdate
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        ref: ${{ github.event.pull_request.head.ref }}
+    - name: Update dependencies in pkl files
+      run: |-
+        FILE="tools/internal.pkl.ci/pkl/.github/workflows/ci-dummies-for-deps.pkl"
+        OLD="${{ needs.checkActionUpdate.outputs.previousDependencyName }}"
+        NEW="${{ needs.checkActionUpdate.outputs.newDependencyName }}"
+        echo "Updating $FILE"
+        sed -i "s|$OLD|$NEW|g" "$FILE"
+    - name: Commit and push changes
+      run: |-
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git commit -am "Update pkl workflows"
+        git push origin

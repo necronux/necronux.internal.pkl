@@ -6,8 +6,7 @@
 
 /// The necronux internal pkl package.
 ///
-/// The necronux internal pkl package contains a set of Pkl modules intended for
-/// shared internal use across repositories in the necronux organization.
+/// Pkl modules intended for shared internal use across repositories in the necronux organization.
 amends "pkl:DocPackageInfo"
 
 name = "necronux.internal.pkl"

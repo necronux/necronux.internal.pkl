@@ -19,7 +19,7 @@ if [ -z "$NEW_VERSION" ]; then
 fi
 
 PKL_FILES=(
-    "PklProject"
+    "doc-package-info.pkl"
 )
 
 for PKL_FILE in "${PKL_FILES[@]}"; do

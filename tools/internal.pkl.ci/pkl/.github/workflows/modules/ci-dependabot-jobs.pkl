@@ -1,0 +1,73 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module CiDependabotJobs
+
+import ".../schemas/GitHubAction.pkl" as gha
+
+import ".../gha/ActionsRegistry.pkl" as ActReg
+import ".../gha/StepsCommon.pkl"
+import ".../gha/UtilsCommon.pkl"
+
+const function checkActionUpdate() = new gha.Job {
+  `if` = "github.event.pull_request.user.login == 'dependabot[bot]'"
+  name = "Check Action Update"
+  outputs {
+    ["shouldUpdatePklWorkflows"] = "${{ steps.dependabotMetadata.outputs.package-ecosystem == 'github-action' }}"
+    ["previousDependencyName"] = "${{ steps.dependencyName.outputs.previous-dependency-name }}"
+    ["newDependencyName"] = "${{ steps.dependencyName.outputs.new-dependency-name }}"
+  }
+  steps {
+    new {
+      name = "Fetch dependabot metadata"
+      id = "dependabotMetadata"
+      uses = ActReg.fetchMetadata
+    }
+    new {
+      name = "Get dependency name"
+      id = "dependencyName"
+      run = """
+        echo '${{ steps.dependabotMetadata.outputs.updated-dependencies-json }}' > deps.json
+        dependency_name=$(jq -r '.[0].dependencyName' deps.json)
+        previous_version=$(jq -r '.[0].prevVersion' deps.json)
+        new_version=$(jq -r '.[0].newVersion' deps.json)
+        echo "previous-dependency-name=$dependency_name@v$previous_version" >> $GITHUB_OUTPUT
+        echo "new-dependency-name=$dependency_name@v$new_version" >> $GITHUB_OUTPUT
+        """
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)
+
+const function updatePklWorkflows() = new gha.Job {
+  `if` = "${{ needs.checkActionUpdate.outputs.shouldUpdatePklWorkflows }}"
+  name = "Update Pkl Workflows"
+  permissions {
+    contents = "write"
+  }
+  steps {
+    StepsCommon.checkoutWithRef(null, "${{ github.event.pull_request.head.ref }}")
+    new {
+      name = "Update dependencies in pkl files"
+      run = """
+        FILE="tools/internal.pkl.ci/pkl/.github/workflows/ci-dummies-for-deps.pkl"
+        OLD="${{ needs.checkActionUpdate.outputs.previousDependencyName }}"
+        NEW="${{ needs.checkActionUpdate.outputs.newDependencyName }}"
+        echo "Updating $FILE"
+        sed -i "s|$OLD|$NEW|g" "$FILE"
+        """
+    }
+    new {
+      name = "Commit and push changes"
+      run = """
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git commit -am "Update pkl workflows"
+        git push origin
+        """
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)

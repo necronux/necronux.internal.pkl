@@ -14,6 +14,7 @@ const cargoDenyAction = Dummy.jobs["cargo-deny-action"].steps[0].uses
 const checkout = Dummy.jobs["checkout"].steps[0].uses
 const deployPages = Dummy.jobs["deploy-pages"].steps[0].uses
 const downloadArtifact = Dummy.jobs["download-artifact"].steps[0].uses
+const fetchMetadata = Dummy.jobs["fetch-metadata"].steps[0].uses
 const githubScript = Dummy.jobs["github-script"].steps[0].uses
 const installAction = Dummy.jobs["install-action"].steps[0].uses
 const reuseAction = Dummy.jobs["reuse-action"].steps[0].uses
