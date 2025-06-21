@@ -53,11 +53,13 @@ const function updatePklWorkflows() = new gha.Job {
     new {
       name = "Update dependencies in pkl files"
       run = """
-        FILE="tools/internal.pkl.ci/pkl/.github/workflows/ci-dummies-for-deps.pkl"
+        SEARCH_DIR="tools/internal.pkl.ci/pkl/.github/workflows"
         OLD="${{ needs.checkActionUpdate.outputs.previousDependencyName }}"
         NEW="${{ needs.checkActionUpdate.outputs.newDependencyName }}"
-        echo "Updating $FILE"
-        sed -i "s|$OLD|$NEW|g" "$FILE"
+        grep -rl -- "$OLD" "$SEARCH_DIR" | while read -r file; do
+          echo "Updating $file"
+          sed -i "s|$OLD|$NEW|g" "$file"
+        done
         """
     }
     new {

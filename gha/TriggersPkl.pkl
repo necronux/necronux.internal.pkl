@@ -12,8 +12,8 @@ import "../schemas/GitHubAction.pkl" as gha
 const function pklPaths() = new Listing<String> {
   "*.pkl"
   "**/*.pkl"
-  "stdschema/**"
-  "tools/**"
+  "PklProject"
+  "**/PklProject"
   "*.kts"
   "**/*.kts"
   "gradle/**"

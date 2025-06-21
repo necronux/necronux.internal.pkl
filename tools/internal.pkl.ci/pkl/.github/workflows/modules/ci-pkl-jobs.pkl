@@ -41,6 +41,7 @@ const function evalCheck() = new gha.Job {
       shell = "bash"
     }
     new {
+      `if` = "github.event.pull_request.user.login != 'dependabot[bot]'"
       name = "Check if internal.pkl.ci pkl modules can be evaluated"
       run = "just eval-internalpklci"
       shell = "bash"
