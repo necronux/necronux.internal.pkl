@@ -74,8 +74,7 @@ jobs:
           sed -i "s|$OLD|$NEW|g" "$file"
         done
     - name: Commit and push changes
-      run: |-
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git commit -am "Update pkl workflows"
-        git push origin
+      uses: iarekylew00t/verified-bot-commit@v1
+      with:
+        message: Update pkl workflows
+        files: '**'

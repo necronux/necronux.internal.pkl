@@ -34,4 +34,5 @@ jobs {
   ["typos"] = (UtilsCommon.dummyJobUses("crate-ci/typos@v1.32.0")) {}
   ["upload-artifact"] = (UtilsCommon.dummyJobUses("actions/upload-artifact@v4")) {}
   ["upload-pages-artifact"] = (UtilsCommon.dummyJobUses("actions/upload-pages-artifact@v3")) {}
+  ["verified-bot-commit"] = (UtilsCommon.dummyJobUses("iarekylew00t/verified-bot-commit@v1")) {}
 }

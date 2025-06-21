@@ -78,12 +78,13 @@ const function updatePklWorkflows() = new gha.Job {
     }
     new {
       name = "Commit and push changes"
-      run = """
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git commit -am "Update pkl workflows"
-        git push origin
-        """
+      uses = ActReg.verifiedBotCommit
+      with {
+        ["message"] = "Update pkl workflows"
+        ["files"] = """
+          **
+          """
+      }
     }
   }
 } |> UtilsCommon.standardJobConfig(null, null)
