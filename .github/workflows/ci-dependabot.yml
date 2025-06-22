@@ -76,5 +76,6 @@ jobs:
     - name: Commit and push changes
       uses: iarekylew00t/verified-bot-commit@v1
       with:
+        ref: ${{ github.event.pull_request.head.ref }}
         message: Update pkl workflows
         files: '**'

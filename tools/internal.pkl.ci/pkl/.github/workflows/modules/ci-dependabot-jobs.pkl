@@ -80,6 +80,7 @@ const function updatePklWorkflows() = new gha.Job {
       name = "Commit and push changes"
       uses = ActReg.verifiedBotCommit
       with {
+        ["ref"] = "${{ github.event.pull_request.head.ref }}"
         ["message"] = "Update pkl workflows"
         ["files"] = """
           **
