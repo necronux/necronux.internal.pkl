@@ -31,7 +31,7 @@ jobs {
   ["reuse-action"] = (UtilsCommon.dummyJobUses("fsfe/reuse-action@v5")) {}
   ["rust-cache"] = (UtilsCommon.dummyJobUses("Swatinem/rust-cache@v2")) {}
   ["rust-toolchain"] = (UtilsCommon.dummyJobUses("dtolnay/rust-toolchain@v1")) {}
-  ["typos"] = (UtilsCommon.dummyJobUses("crate-ci/typos@v1.32.0")) {}
+  ["typos"] = (UtilsCommon.dummyJobUses("crate-ci/typos@v1.33.1")) {}
   ["upload-artifact"] = (UtilsCommon.dummyJobUses("actions/upload-artifact@v4")) {}
   ["upload-pages-artifact"] = (UtilsCommon.dummyJobUses("actions/upload-pages-artifact@v3")) {}
 }
