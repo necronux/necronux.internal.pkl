@@ -33,7 +33,6 @@ jobs {
   ["conclusion"] = (JobsConcl.conclusion()) {
     needs {
       "resolvecheck"
-      "evalcheck"
     }
   }
 

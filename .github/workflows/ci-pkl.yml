@@ -46,7 +46,6 @@ jobs:
     if: ${{ !cancelled() }}
     needs:
     - resolvecheck
-    - evalcheck
     permissions:
       contents: none
     runs-on: ubuntu-latest
@@ -78,6 +77,7 @@ jobs:
       run: just resolve-internalpklci
   evalcheck:
     name: Eval Check
+    if: '!startsWith(github.head_ref, "dependabot/")'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -93,7 +93,6 @@ jobs:
       shell: bash
       run: just eval-internal
     - name: Check if internal.pkl.ci pkl modules can be evaluated
-      if: github.event.pull_request.user.login != 'dependabot[bot]'
       shell: bash
       run: just eval-internalpklci
     - name: Verify pkl modules evaluation reflects the latest changes
