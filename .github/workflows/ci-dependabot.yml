@@ -72,7 +72,11 @@ jobs:
         grep -rl -- "$OLD" "$SEARCH_DIR" | while read -r file; do
           echo "Updating $file"
           sed -i "s|$OLD|$NEW|g" "$file"
+          git add "$file"
         done
+
+        echo "Showing changes before commit:"
+        git diff --cached
     - name: Commit and push changes
       uses: iarekylew00t/verified-bot-commit@v1
       with:
