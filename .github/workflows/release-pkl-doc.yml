@@ -22,6 +22,8 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    outputs:
+      has_changes: ${{ steps.detect_changes.outputs.has_changes }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -39,18 +41,35 @@ jobs:
     - name: Generate pkl doc
       shell: bash
       run: just make-internalpkldoc
-    - name: Update docs in docs branch and push
+    - name: Stage files and show diff
+      id: detect_changes
       working-directory: tmp-docs
       run: |-
         git add .
-        git commit --amend -m "Update docs"
-        git push --force origin docs
+        git diff --cached --name-only
+
+        if git diff --cached --name-only --quiet; then
+          echo "No changes"
+          echo "Skipping deployment as nothing new to deploy..."
+          echo "has_changes=false" >> $GITHUB_OUTPUT
+        else
+          echo "Changes detected"
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+        fi
+    - name: Commit in docs branch and push
+      if: ${{ steps.detect_changes.outputs.has_changes == 'true' }}
+      working-directory: tmp-docs
+      run: |-
+        git commit -m "Update docs"
+        git push origin docs
     - name: Upload artifact for GitHub Pages
+      if: ${{ steps.detect_changes.outputs.has_changes == 'true' }}
       uses: actions/upload-pages-artifact@v3
       with:
         path: tmp-docs
   deploy-doc-to-pages:
     name: Deploy Pkl Doc to GitHub Pages
+    if: ${{ needs.generate-pkl-doc.outputs.has_changes == 'true' }}
     needs:
     - generate-pkl-doc
     permissions:

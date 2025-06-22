@@ -13,7 +13,70 @@ import "ActionsRegistry.pkl" as ActReg
 import "StepsCommon.pkl"
 import "UtilsCommon.pkl"
 
+const function generatePklDoc(path: String, branchName: String, genCmd: String) = new gha.Job {
+  name = "Generate Pkl Doc"
+  permissions {
+    contents = "write"
+  }
+  outputs {
+    ["has_changes"] = "${{ steps.detect_changes.outputs.has_changes }}"
+  }
+  steps {
+    StepsCommon.checkout(0)
+    new {
+      name = "Setup worktree for \(branchName)"
+      run = """
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git worktree add \(path) \(branchName)
+        """
+    }
+    StepsCommon.installAction("just")
+    new {
+      name = "Generate pkl doc"
+      run = genCmd
+      shell = "bash"
+    }
+    new {
+      name = "Stage files and show diff"
+      id = "detect_changes"
+      `working-directory` = path
+      run = """
+        git add .
+        git diff --cached --name-only
+
+        if git diff --cached --name-only --quiet; then
+          echo "No changes"
+          echo "Skipping deployment as nothing new to deploy..."
+          echo "has_changes=false" >> $GITHUB_OUTPUT
+        else
+          echo "Changes detected"
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+        fi
+        """
+    }
+    new {
+      `if` = "${{ steps.detect_changes.outputs.has_changes == 'true' }}"
+      name = "Commit in \(branchName) branch and push"
+      `working-directory` = path
+      run = """
+        git commit -m "Update docs"
+        git push origin \(branchName)
+        """
+    }
+    new {
+      `if` = "${{ steps.detect_changes.outputs.has_changes == 'true' }}"
+      name = "Upload artifact for GitHub Pages"
+      uses = ActReg.uploadPagesArtifact
+      with {
+        ["path"] = path
+      }
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)
+
 const function deployDocToPages() = new gha.Job {
+  `if` = "${{ needs.generate-pkl-doc.outputs.has_changes == 'true' }}"
   name = "Deploy Pkl Doc to GitHub Pages"
   permissions {
     pages = "write"
@@ -31,3 +94,4 @@ const function deployDocToPages() = new gha.Job {
     }
   }
 } |> UtilsCommon.standardJobConfig(null, null)
+
