@@ -31,9 +31,7 @@ const function resolveCheck() = new gha.Job {
 } |> UtilsCommon.standardJobConfig(null, null)
 
 const function evalCheck() = new gha.Job {
-  `if` = """
-    !startsWith(github.head_ref, "dependabot/")
-    """
+  `if` = "${{ !startsWith(github.head_ref, 'dependabot/') }}"
   name = "Eval Check"
   steps {
     StepsCommon.checkout(null)
