@@ -13,7 +13,35 @@ import "ActionsRegistry.pkl" as ActReg
 import "StepsCommon.pkl"
 import "UtilsCommon.pkl"
 
+const function checkStableVersion() = new gha.Job {
+  name = "Check if Pkl Project Version is Stable"
+  outputs {
+    ["is_stable"] = "${{ steps.check_version.outputs.is_stable }}"
+  }
+  steps {
+    StepsCommon.checkout(null)
+    new {
+      name = "Extract and check version"
+      id = "check_version"
+      run = """
+        VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' doc-package-info.pkl)
+        echo "Extracted necronux.internal.pkl PklProject version: '$VERSION'"
+
+        if [[ "$VERSION" =~ [+-] ]]; then
+          echo "Pre-release or metadata detected in version: $VERSION"
+          echo "Only stable versions are allowed to get docs generated, skipping docs generation..."
+          echo "is_stable=false" >> "$GITHUB_OUTPUT"
+        else
+          echo "Version is stable"
+          echo "is_stable=true" >> "$GITHUB_OUTPUT"
+        fi
+        """
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)
+
 const function generatePklDoc(path: String, branchName: String, genCmd: String) = new gha.Job {
+  `if` = "${{ needs.check-stable-version.outputs.is_stable == 'true' }}"
   name = "Generate Pkl Doc"
   permissions {
     contents = "write"
@@ -76,7 +104,7 @@ const function generatePklDoc(path: String, branchName: String, genCmd: String) 
 } |> UtilsCommon.standardJobConfig(null, null)
 
 const function deployDocToPages() = new gha.Job {
-  `if` = "${{ needs.generate-pkl-doc.outputs.has_changes == 'true' }}"
+  `if` = "${{ (needs.generate-pkl-doc.result != 'skipped') && (needs.generate-pkl-doc.outputs.has_changes == 'true') }}"
   name = "Deploy Pkl Doc to GitHub Pages"
   permissions {
     pages = "write"

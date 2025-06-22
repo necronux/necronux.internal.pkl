@@ -24,7 +24,12 @@ on {
   }
 }
 jobs {
-  ["generate-pkl-doc"] = (JobsPklDoc.generatePklDoc("tmp-docs", "docs", "just make-internalpkldoc")) {}
+  ["check-stable-version"] = (JobsPklDoc.checkStableVersion()) {}
+  ["generate-pkl-doc"] = (JobsPklDoc.generatePklDoc("tmp-docs", "docs", "just make-internalpkldoc")) {
+    needs {
+      "check-stable-version"
+    }
+  }
   ["deploy-doc-to-pages"] = (JobsPklDoc.deployDocToPages()) {
     needs {
       "generate-pkl-doc"
