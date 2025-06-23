@@ -22,6 +22,7 @@ name: CI-Pkl
     - gradlew
     - gradlew.bat
     - justfile
+    - tools/internal.pkl.ci/**
   push:
     paths:
     - '*.pkl'
@@ -34,6 +35,7 @@ name: CI-Pkl
     - gradlew
     - gradlew.bat
     - justfile
+    - tools/internal.pkl.ci/**
   workflow_dispatch: {}
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}

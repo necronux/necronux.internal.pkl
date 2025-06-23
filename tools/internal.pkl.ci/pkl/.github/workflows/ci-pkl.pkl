@@ -22,10 +22,14 @@ concurrency = (UtilsCommon.concurrencyPROrRef()) {}
 
 on {
   pull_request {
-    paths = (TriggersPkl.pklPaths()) {}
+    paths = (TriggersPkl.pklPaths()) {
+      "tools/internal.pkl.ci/**"
+    }
   }
   push {
-    paths = (TriggersPkl.pklPaths()) {}
+    paths = (TriggersPkl.pklPaths()) {
+      "tools/internal.pkl.ci/**"
+    }
   }
   workflow_dispatch {}
 }

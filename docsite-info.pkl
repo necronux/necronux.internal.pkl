@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // ==-----------------------------------------------------------== //
 
-/// Documentation for packages maintained on [necronux.internal.pkl](https://github.com/necronux/necronux.internal.pkl) repository.
+/// Documentation for pkl packages maintained on [necronux.internal.pkl](https://github.com/necronux/necronux.internal.pkl) repository.
 amends "pkl:DocsiteInfo"
 
 title = "Packages"
