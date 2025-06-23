@@ -97,7 +97,7 @@ jobs:
         path: tmp-docs
   deploy-doc-to-pages:
     name: Deploy Pkl Doc to GitHub Pages
-    if: ${{ (needs.generate-pkl-doc.result != 'skipped') && (needs.generate-pkl-doc.outputs.has_changes == 'true') }}
+    if: ${{ needs.generate-pkl-doc.outputs.has_changes == 'true' }}
     needs:
     - generate-pkl-doc
     permissions:

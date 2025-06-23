@@ -104,7 +104,7 @@ const function generatePklDoc(path: String, branchName: String, genCmd: String) 
 } |> UtilsCommon.standardJobConfig(null, null)
 
 const function deployDocToPages() = new gha.Job {
-  `if` = "${{ (needs.generate-pkl-doc.result != 'skipped') && (needs.generate-pkl-doc.outputs.has_changes == 'true') }}"
+  `if` = "${{ needs.generate-pkl-doc.outputs.has_changes == 'true' }}"
   name = "Deploy Pkl Doc to GitHub Pages"
   permissions {
     pages = "write"
