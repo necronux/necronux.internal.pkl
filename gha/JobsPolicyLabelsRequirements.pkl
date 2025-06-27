@@ -1,0 +1,86 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module necronux.internal.pkl.gha.JobsPolicyLabelsRequirements
+
+import "../schemas/GitHubAction.pkl" as gha
+
+import "ActionsRegistry.pkl" as ActReg
+import "StepsCommon.pkl"
+import "UtilsCommon.pkl"
+
+const function enforceLabelsRequirements() = new gha.Job {
+  name = "Enforce Labels Requirements"
+  permissions {
+    issues = "write"
+    `pull-requests` = "write"
+  }
+  steps {
+    new {
+      name = "Ensure issue or pull request has required labels"
+      uses = ActReg.githubScript
+      with {
+        ["script"] = """
+          const isPR = !!context.payload.pull_request;
+          const labels = (isPR ? context.payload.pull_request.labels : context.payload.issue.labels) || [];
+
+          const hasCategory = labels.some(label => label.name.startsWith('category:'));
+          const hasState = labels.some(label => label.name.startsWith('state:'));
+
+          const issueNumber = isPR ? context.payload.pull_request.number : context.payload.issue.number;
+          const owner = context.repo.owner;
+          const repo = context.repo.repo;
+
+          const { data: comments } = await github.rest.issues.listComments({
+            owner,
+            repo,
+            issue_number: issueNumber,
+            per_page: 100,
+          });
+
+          if (hasCategory && hasState) {
+            const warningComment = comments.find(comment =>
+            comment.body.includes("⚠️ This") &&
+            comment.body.includes("missing required label(s):") &&
+            comment.user.type === "Bot"
+          );
+
+          if (warningComment) {
+            await github.rest.issues.deleteComment({
+              owner,
+              repo,
+              comment_id: warningComment.id,
+            });
+            console.log("✅ All required labels present. Old warning comment deleted.");
+          } else {
+            console.log("✅ All required labels present. No warning comment to clean up.");
+          }
+          return;
+          }
+
+          const missing = [];
+          if (!hasCategory) missing.push('`category:*`');
+          if (!hasState) missing.push('`state:*`');
+
+          const body = `⚠️ This ${isPR ? 'pull request' : 'issue'} is missing required label(s): ${missing.join(' and ')}. Please make sure to add them before continuing.`;
+
+          const alreadyCommented = comments.some(comment => comment.body === body);
+          if (!alreadyCommented) {
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              body,
+            });
+          }
+
+          core.setFailed(`Missing required label(s): ${missing.join(', ')}`);
+          """
+      }
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)
