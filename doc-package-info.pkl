@@ -10,7 +10,7 @@
 amends "pkl:DocPackageInfo"
 
 name = "necronux.internal.pkl"
-version = "0.9.0-dev"
+version = "0.9.0"
 importUri = "package://pkg.pkl-lang.org/github.com/necronux/\(name)/\(name)@\(version)/"
 authors {
   "Nayan (NayanTheSpaceGuy) <nayantsg@proton.me>"
