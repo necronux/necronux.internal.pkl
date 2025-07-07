@@ -45,7 +45,7 @@ jobs:
       with:
         fetch-depth: 1
     - name: Check for typos
-      uses: crate-ci/typos@v1.33.1
+      uses: crate-ci/typos@v1.34.0
   taplo:
     name: Taplofmt
     runs-on: ubuntu-latest
